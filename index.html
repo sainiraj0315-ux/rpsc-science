@@ -108,7 +108,7 @@ async function doLogin(){let u=$('id').value.trim(),p=$('pw').value;$('err').tex
  try{await auth.signInWithEmailAndPassword(u.includes('@')?u:u+DOM,p)}catch(e){$('err').textContent='ID या Password गलत है'}}
 auth.onAuthStateChanged(async u=>{
  $('login').classList.toggle('hide',!!u);$('app').classList.toggle('hide',!u);$('lo').classList.toggle('hide',!u);
- if(!u)return;admin=u.email===TEACHER;$('tadm').classList.toggle('hide',!admin);
+ admin=(u.email||'').trim().toLowerCase()===TEACHER.trim().toLowerCase();
  const s=await db.collection('audio').get();A={};s.forEach(d=>A[d.id]=d.data());render()});
 function render(){const q=$('q').value.toLowerCase(),L=part==1?P1:P2;let h='';
  L.forEach(([u,cs])=>{const items=cs.length?cs:['(Graduation level – NCERT chapter नहीं)'];
