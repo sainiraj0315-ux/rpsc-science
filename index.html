@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RPSC Science Audio App</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#f4f6fb;--c:#fff;--t:#1d2433;--p:#5b3df5;--m:#6b7280;--b:#e3e7f0}
+@media(prefers-color-scheme:dark){:root{--bg:#10131c;--c:#1a1f2d;--t:#eef1f8;--m:#9aa3b5;--b:#2a3144}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--t)}
+header{background:var(--p);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+h1{font-size:17px;margin:0}main{padding:12px;max-width:760px;margin:auto}
+.card{background:var(--c);border:1px solid var(--b);border-radius:12px;padding:12px;margin:10px 0}
+input,button{font:inherit;padding:10px;border-radius:8px;border:1px solid var(--b);background:var(--c);color:var(--t);width:100%;margin:4px 0}
+button{background:var(--p);color:#fff;border:0;cursor:pointer;width:auto;padding:9px 14px}
+button.s{background:var(--m)}header button{background:#fff3;padding:6px 10px;margin-left:6px}
+.tabs{display:flex;gap:6px}.tabs button{flex:1;background:var(--c);color:var(--t);border:1px solid var(--b)}.tabs .on{background:var(--p);color:#fff}
+details{background:var(--c);border:1px solid var(--b);border-radius:12px;margin:8px 0;padding:10px 12px}
+summary{font-weight:600;cursor:pointer}.ch{border-top:1px dashed var(--b);padding:8px 0}
+.cl{font-size:12px;color:var(--p);font-weight:700}audio{width:100%;margin-top:6px}.m{color:var(--m);font-size:13px}
+.hide{display:none}#qr{display:flex;justify-content:center;padding:14px;background:#fff;border-radius:10px}
+</style></head><body>
+<header><h1>🔬 RPSC Science – Audio</h1><div><button onclick="showQR()">QR</button><button id="lo" class="hide" onclick="auth.signOut()">Logout</button></div></header>
+<main>
+<div id="login" class="card"><b>Login</b>
+<input id="id" placeholder="Student ID / Teacher email" autocapitalize="none">
+<input id="pw" type="password" placeholder="Password">
+<button onclick="doLogin()">Login</button> <span id="err" class="m"></span></div>
+<div id="app" class="hide">
+<div id="tadm" class="card hide"><b>👩‍🏫 Teacher panel</b><div class="m">नया Student ID बनाएँ</div>
+<input id="nid" placeholder="Student ID (e.g. rahul01)" autocapitalize="none"><input id="npw" placeholder="Password (min 6)">
+<button onclick="addStu()">Student जोड़ें</button> <span id="smsg" class="m"></span></div>
+<div class="tabs"><button id="t1" class="on" onclick="tab(1)">Part I (Sec/Sr Sec)</button><button id="t2" onclick="tab(2)">Part II (Graduation)</button></div>
+<input id="q" placeholder="🔍 Unit या chapter खोजें" oninput="render()">
+<div id="list"></div></div></main>
+<div id="qm" class="hide" style="position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:9" onclick="this.classList.add('hide')"><div class="card" style="text-align:center"><div id="qr"></div><div class="m">Student इसे स्कैन करें</div></div></div>
+<script>
+// ====== SETUP: अपनी Firebase values यहाँ डालें (README देखें) ======
+const cfg={apiKey:"YOUR_API_KEY",authDomain:"YOUR_PROJECT.firebaseapp.com",projectId:"YOUR_PROJECT",storageBucket:"YOUR_PROJECT.appspot.com",appId:"YOUR_APP_ID"};
+const TEACHER="teacher@example.com"; // सिर्फ यही email edit कर पाएगा
+const DOM="@student.app";
+// ================================================================
+firebase.initializeApp(cfg);const auth=firebase.auth(),db=firebase.firestore(),st=firebase.storage();
+// Unit -> NCERT chapters (class: chapter). जहाँ unit NCERT में नहीं, वहाँ खाली।
+const P1=[
+["Cell & Molecular Biology (Cell, Organelles, Nucleic acids)",["9 Fundamental Unit of Life","11 Cell: The Unit of Life","11 Biomolecules","12 Molecular Basis of Inheritance"]],
+["Genetics (Mendelism, Blood groups, Disorders)",["10 Heredity and Evolution","12 Principles of Inheritance and Variation"]],
+["Taxonomy (Five Kingdom, Animal & Plant groups)",["9 Diversity in Living Organisms","11 The Living World","11 Biological Classification","11 Plant Kingdom","11 Animal Kingdom"]],
+["Ecology & Environment",["9 Natural Resources","10 Our Environment","10 Management of Natural Resources","12 Organisms and Populations","12 Ecosystem","12 Biodiversity and Conservation"]],
+["Biotechnology",["12 Biotechnology: Principles and Processes","12 Biotechnology and its Applications"]],
+["Microbiology (Virus, Bacteria, Lichens)",["11 Biological Classification","12 Microbes in Human Welfare"]],
+["Plant Morphology & Anatomy",["11 Morphology of Flowering Plants","11 Anatomy of Flowering Plants"]],
+["Water Relation (Osmosis, Ascent of sap)",["11 Transport in Plants"]],
+["Photosynthesis",["11 Photosynthesis in Higher Plants"]],
+["Enzymes",["11 Biomolecules"]],
+["Plant Growth & Development",["11 Plant Growth and Development"]],
+["Animal Developmental Biology",["12 Human Reproduction","12 Reproductive Health"]],
+["Evolution",["10 Heredity and Evolution","12 Evolution"]],
+["Human Anatomy & Physiology",["10 Life Processes","10 Control and Coordination","11 Digestion and Absorption","11 Breathing and Exchange of Gases","11 Body Fluids and Circulation","11 Excretory Products","11 Neural Control and Coordination"]],
+["Human Health",["9 Why Do We Fall Ill","12 Human Health and Disease"]],
+["Atomic Structure",["9 Structure of the Atom","9 Atoms and Molecules","11 Structure of Atom","11 Some Basic Concepts of Chemistry"]],
+["Chemical Bonding",["11 Chemical Bonding and Molecular Structure"]],
+["Periodic Classification",["10 Periodic Classification of Elements","11 Classification of Elements and Periodicity"]],
+["Equilibrium (Acid-Base, pH, Buffer)",["10 Acids, Bases and Salts","11 Equilibrium"]],
+["Redox Reactions",["10 Chemical Reactions and Equations","11 Redox Reactions"]],
+["Organic Chemistry & Hydrocarbons",["10 Carbon and its Compounds","11 Organic Chemistry: Basic Principles","11 Hydrocarbons"]],
+["Physical World & Measurements",["11 Units and Measurements"]],
+["Vectors & Kinematics",["9 Motion","11 Motion in a Straight Line","11 Motion in a Plane"]],
+["Laws of Motion",["9 Force and Laws of Motion","11 Laws of Motion"]],
+["Work, Energy, Power",["9 Work and Energy","11 Work, Energy and Power"]],
+["Rotational Motion",["11 System of Particles and Rotational Motion"]],
+["Gravitation",["9 Gravitation","11 Gravitation"]],
+["Properties of Matter & Fluid Mechanics",["11 Mechanical Properties of Solids","11 Mechanical Properties of Fluids"]],
+["Electricity & Magnetism",["10 Electricity","10 Magnetic Effects of Electric Current","12 Moving Charges and Magnetism","12 Electromagnetic Induction"]],
+["Ray Optics",["10 Light: Reflection and Refraction","10 Human Eye and Colourful World","12 Ray Optics and Optical Instruments"]]];
+const P2=[
+["Cell cycle, DNA replication, Transcription, Translation",["11 Cell Cycle and Cell Division","12 Molecular Basis of Inheritance"]],
+["Genetics (Gene regulation, Sex-linked, Mutations)",["12 Principles of Inheritance and Variation"]],
+["Animal Taxonomy & Anatomy",[]],["Taxonomy of Angiosperms",[]],
+["Ecology (Succession, Biogeochemical cycles, Global warming)",["12 Ecosystem","12 Biodiversity and Conservation"]],
+["Biotechnology (Gene transfer, Tissue culture)",["12 Biotechnology and its Applications"]],
+["Cryptogams, Seed Plants, Plant Anatomy",[]],["Reproduction in Plants",["12 Sexual Reproduction in Flowering Plants"]],
+["Respiration",["11 Respiration in Plants"]],["Human Physiology",["11 Chemical Coordination and Integration","11 Locomotion and Movement"]],
+["Economic Zoology",[]],["Co-ordination Compounds",["12 Coordination Compounds"]],
+["States of Matter",["11 States of Matter"]],["s, p, d, f-block Elements",["12 The d- and f-Block Elements"]],
+["Metals & Non-metals",["10 Metals and Non-metals"]],["Chemical Kinetics",["12 Chemical Kinetics"]],
+["Solutions",["12 Solutions"]],["Electrochemistry",["12 Electrochemistry"]],["Surface Chemistry",["12 Surface Chemistry"]],
+["Reaction Mechanism & Spectroscopy",[]],["Bio-molecules & Polymers",["12 Biomolecules","12 Polymers"]],
+["Chemistry in Everyday Life",["12 Chemistry in Everyday Life"]],
+["Mechanics & Relativity",[]],["Electrodynamics",["12 Electric Charges and Fields","12 Electrostatic Potential and Capacitance","12 Alternating Current"]],
+["Wave Optics",["12 Wave Optics"]],["Thermal Physics",["11 Thermodynamics","11 Kinetic Theory"]],
+["Quantum, Atomic & Nuclear Physics",["12 Dual Nature of Radiation and Matter","12 Atoms","12 Nuclei"]],["Electronics",["12 Semiconductor Electronics"]]];
+let part=1,admin=false,A={};
+const $=i=>document.getElementById(i),id=(u,c)=>btoa(unescape(encodeURIComponent(u+'|'+c))).replace(/[\/+=]/g,'');
+function tab(n){part=n;$('t1').className=n==1?'on':'';$('t2').className=n==2?'on':'';render()}
+async function doLogin(){let u=$('id').value.trim(),p=$('pw').value;$('err').textContent='';
+ try{await auth.signInWithEmailAndPassword(u.includes('@')?u:u+DOM,p)}catch(e){$('err').textContent='ID या Password गलत है'}}
+auth.onAuthStateChanged(async u=>{
+ $('login').classList.toggle('hide',!!u);$('app').classList.toggle('hide',!u);$('lo').classList.toggle('hide',!u);
+ if(!u)return;admin=u.email===TEACHER;$('tadm').classList.toggle('hide',!admin);
+ const s=await db.collection('audio').get();A={};s.forEach(d=>A[d.id]=d.data());render()});
+function render(){const q=$('q').value.toLowerCase(),L=part==1?P1:P2;let h='';
+ L.forEach(([u,cs])=>{const items=cs.length?cs:['(Graduation level – NCERT chapter नहीं)'];
+  if(q&&!(u+items.join()).toLowerCase().includes(q))return;
+  h+=`<details><summary>${u}</summary>`;
+  items.forEach(c=>{const k=id(u,c),a=A[k],cl=/^\d+ /.test(c)?c.split(' ')[0]:'';
+   h+=`<div class="ch">${cl?`<span class="cl">Class ${cl}</span> `:''}${c.replace(/^\d+ /,'')}`;
+   if(a)h+=`<audio controls preload="none" src="${a.url}"></audio>`;else h+=`<div class="m">Audio अभी नहीं है</div>`;
+   if(admin)h+=`<input type="file" accept="audio/*" onchange="up('${k}',this)"><input placeholder="या audio link चिपकाएँ" onchange="lk('${k}',this.value)">`;
+   h+='</div>'});h+='</details>'});$('list').innerHTML=h||'<div class="m">कुछ नहीं मिला</div>'}
+async function save(k,url){await db.collection('audio').doc(k).set({url});A[k]={url};render()}
+async function up(k,el){const f=el.files[0];if(!f)return;el.insertAdjacentText('afterend',' ⏳ Uploading…');
+ try{const r=st.ref('audio/'+k+'_'+f.name);await r.put(f);await save(k,await r.getDownloadURL())}catch(e){alert('Upload नहीं हुआ: '+e.message);render()}}
+async function lk(k,v){if(v.trim())await save(k,v.trim())}
+async function addStu(){const i=$('nid').value.trim().toLowerCase(),p=$('npw').value;
+ try{const a2=firebase.apps.find(x=>x.name=='s2')||firebase.initializeApp(cfg,'s2');
+  await a2.auth().createUserWithEmailAndPassword(i+DOM,p);await a2.auth().signOut();$('smsg').textContent='✅ '+i+' बन गया';$('nid').value=$('npw').value=''}
+ catch(e){$('smsg').textContent='❌ '+e.message}}
+function showQR(){$('qr').innerHTML='';new QRCode($('qr'),{text:location.href.split('#')[0],width:220,height:220});$('qm').classList.remove('hide')}
+</script></body></html>
