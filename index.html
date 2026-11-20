@@ -39,6 +39,7 @@ main{padding-bottom:84px}h3{margin:0 0 8px}
 #nv button{flex:1;background:transparent;color:var(--m);border-radius:0;margin:0;padding:8px 2px;font-size:12px;line-height:1.3}#nv button.on{color:var(--p);font-weight:700}
 :root[data-th=light]{--bg:#f4f6fb;--c:#fff;--t:#1d2433;--m:#6b7280;--b:#e3e7f0}
 :root[data-th=dark]{--bg:#10131c;--c:#1a1f2d;--t:#eef1f8;--m:#9aa3b5;--b:#2a3144}
+#up{position:fixed;left:12px;right:12px;bottom:76px;background:var(--p);color:#fff;padding:10px 14px;border-radius:12px;z-index:15;text-align:center}
 </style></head><body>
 <header><div class="lh"><img id="lg" class="hide" alt=""><h1 id="nm">RPSC Science</h1></div><div><button onclick="showQR()">QR</button><button id="lo" onclick="lg()">🔑 Teacher</button></div></header>
 <main>
@@ -69,7 +70,7 @@ main{padding-bottom:84px}h3{margin:0 0 8px}
 <div class="m">💰 Payment / Lock</div><button onclick="bl()">🔒 सब units Lock + code बनाएँ</button><button class="s" onclick="bu()">🔓 सब Free करें</button>
 <div class="m">Codes list (कॉपी करके रखें)</div><textarea id="cl" rows="7" readonly></textarea><button class="s" onclick="showCodes()">📋 List दिखाएँ</button>
 <button onclick="saveS()">सेटिंग लागू करें</button><button onclick="dlj()">💾 data.json Save करें</button><div class="m">हर बदलाव के बाद 💾 दबाएँ और data.json GitHub पर replace करें।</div>
-</div></div></main><nav id="nv"><button class="on" data-p="app" onclick="pg('app')">🏠<br>Home</button><button data-p="pAsk" onclick="pg('pAsk')">💬<br>Ask</button><button data-p="pPriv" onclick="pg('pPriv')">🔒<br>Privacy</button><button data-p="pSet" onclick="pg('pSet')">⚙️<br>Settings</button></nav>
+</div></div></main><div id="up" class="hide"></div><nav id="nv"><button class="on" data-p="app" onclick="pg('app')">🏠<br>Home</button><button data-p="pAsk" onclick="pg('pAsk')">💬<br>Ask</button><button data-p="pPriv" onclick="pg('pPriv')">🔒<br>Privacy</button><button data-p="pSet" onclick="pg('pSet')">⚙️<br>Settings</button></nav>
 <div id="qm" class="hide" style="position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:9" onclick="this.classList.add('hide')"><div class="card" style="text-align:center"><div id="qr"></div><div class="m">Student इसे स्कैन करें</div></div></div>
 <div id="dlg" class="hide" style="position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:20"><div class="card" style="width:90%;max-width:360px"><div id="dm"></div><input id="di"><button id="dy">OK</button><button class="s" id="dn">रद्द</button></div></div>
 <script>
@@ -158,10 +159,14 @@ function sa(i,c,v){v=v.trim();if(v)addA(i,c,/^(https?:|audio\/)/.test(v)?v:'audi
 async function ea(i,c,k){const x=CH(i,c).au[k],n=await ask('Audio का नाम',x.n);if(n){x.n=n;sv()}}
 async function da(i,c,k){if(await ask('Audio हटाएँ?','','c')){CH(i,c).au.splice(k,1);sv()}}
 function sp(i,c,v){CH(i,c).p=v.trim();sv()}
-async function upa(i,c,el){const f=el.files[0];if(!f)return;if(!GH())return ask('पहले Teacher panel में GitHub जोड़ें, फिर audio upload होगा।','','a');
- if(f.size>25e6)return ask('फाइल 25 MB से बड़ी है','','a');el.insertAdjacentText('afterend',' ⏳ Upload हो रहा है…');
- try{const n=c+'_'+Date.now().toString(36)+'_'+f.name.replace(/[^\w.\-]/g,'_');await gput('audio/'+n,await fb(f));addA(i,c,'audio/'+n);await gsave();ask('Audio upload हो गया ✅ (1-2 मिनट में students को सुनाई देगा)','','a')}
- catch(e){ask('Upload नहीं हुआ: '+e.message,'','a');render()}}
+const up_=m=>{$('up').textContent=m;$('up').classList.toggle('hide',!m)};
+async function upa(i,c,el){const fs=[...el.files].sort((a,b)=>a.name.localeCompare(b.name,'en',{numeric:true}));el.value='';if(!fs.length)return;
+ if(!GH())return ask('पहले Teacher panel में GitHub जोड़ें, फिर audio upload होगा।','','a');
+ const room=10-(CH(i,c).au||[]).length;if(room<=0)return ask('एक chapter में 10 तक audio','','a');
+ const fl=fs.slice(0,room);if(fl.some(f=>f.size>25e6))return ask('कोई फाइल 25 MB से बड़ी है','','a');
+ let n=0;try{for(const f of fl){up_(`⏳ ${n+1}/${fl.length} upload हो रहा है…`);const nm=c+'_'+Date.now().toString(36)+'_'+f.name.replace(/[^\w.\-]/g,'_');await gput('audio/'+nm,await fb(f));const x=CH(i,c);x.au=x.au||[];x.au.push({n:f.name.replace(/\.[^.]+$/,'').slice(0,40),u:'audio/'+nm});n++}
+  up_('⏳ Save हो रहा है…');sv();await gsave();up_('');ask(`${n} audio upload हो गए ✅`+(fs.length>room?` (${fs.length-room} छूट गए, 10 की सीमा)`:'')+' · 1-2 मिनट में students को सुनाई देंगे','','a')}
+ catch(e){up_('');sv();ask('Upload पूरा नहीं हुआ: '+e.message+(n?` (${n} हो चुके, 💾 दबा लें)`:''),'','a')}}
 async function upp(i,c,el){const f=el.files[0];if(!f)return;if(!GH())return ask('पहले Teacher panel में GitHub जोड़ें।','','a');
  if(f.size>25e6)return ask('PDF 25 MB से बड़ी है','','a');el.insertAdjacentText('afterend',' ⏳ Upload…');
  try{const n=c+'_'+f.name.replace(/[^\w.\-]/g,'_');await gput('pdf/'+n,await fb(f));sp(i,c,'pdf/'+n);await gsave();ask('PDF upload हो गया ✅','','a')}
@@ -193,7 +198,7 @@ function render(){const q=$('q').value.toLowerCase();let h='';
     L.forEach((x,j)=>{h+=`<div class="ar"><span class="no">${j+1}</span><span class="an">${x.n}</span>${admin?`<span><button class="ib" onclick="ea('${u.id}','${c.id}',${j})">✏️</button><button class="ib" onclick="da('${u.id}','${c.id}',${j})">🗑</button></span>`:''}</div><audio controls preload="none" src="${x.u}"></audio>`});
     if(!L.length)h+='<div class="m">Audio अभी नहीं है</div>';
     if(c.p)h+=`<a class="pdf" href="${c.p}" target="_blank" rel="noopener">📘 NCERT PDF पढ़ें</a>`;
-    if(admin)h+=`<details class="tt" ${OP.has('t_'+c.id)?'open':''} ontoggle="tg('t_${c.id}',this)"><summary>⚙️ Teacher tools</summary><label class="fb">🎙 Audio जोड़ें (${L.length}/10)<input type="file" accept="audio/*" onchange="upa('${u.id}','${c.id}',this)"></label><label class="fb">📘 PDF ${c.p?'बदलें':'जोड़ें'}<input type="file" accept="application/pdf" onchange="upp('${u.id}','${c.id}',this)"></label><input placeholder="या audio का link" onchange="sa('${u.id}','${c.id}',this.value)"><input value="${c.p||''}" placeholder="या PDF का link" onchange="sp('${u.id}','${c.id}',this.value)"><button class="s" onclick="ec('${u.id}','${c.id}')">✏️ Chapter नाम</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑 Chapter</button></details>`;
+    if(admin)h+=`<details class="tt" ${OP.has('t_'+c.id)?'open':''} ontoggle="tg('t_${c.id}',this)"><summary>⚙️ Teacher tools</summary><label class="fb">🎙 Audio जोड़ें (${L.length}/10) · कई एक साथ चुनें<input type="file" accept="audio/*" multiple onchange="upa('${u.id}','${c.id}',this)"></label><label class="fb">📘 PDF ${c.p?'बदलें':'जोड़ें'}<input type="file" accept="application/pdf" onchange="upp('${u.id}','${c.id}',this)"></label><input placeholder="या audio का link" onchange="sa('${u.id}','${c.id}',this.value)"><input value="${c.p||''}" placeholder="या PDF का link" onchange="sp('${u.id}','${c.id}',this.value)"><button class="s" onclick="ec('${u.id}','${c.id}')">✏️ Chapter नाम</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑 Chapter</button></details>`;
     h+='</div>'})})}
   if(admin)h+=`<details class="tt" ${OP.has('ut_'+u.id)?'open':''} ontoggle="tg('ut_${u.id}',this)"><summary>⚙️ Unit tools</summary><button onclick="nc('${u.id}')">➕ Chapter</button><button class="s" onclick="en('${u.id}')">✏️ नाम</button><button class="s" onclick="lk('${u.id}')">${u.lock?'🔓 Unlock सबके लिए':'🔒 Lock'}</button><button class="s" onclick="kc('${u.id}')">🔑 Code: ${u.k||'-'}</button><button class="s" onclick="kp('${u.id}')">💰 Price ${u.pr?'₹'+u.pr:''}</button><button class="s" onclick="gu('${u.id}')">↔ Group</button><button class="s" onclick="dl('${u.id}')">🗑 Unit</button></details>`;
   h+='</details>'});$('list').innerHTML=h||'<div class="m">कुछ नहीं मिला</div>'}
