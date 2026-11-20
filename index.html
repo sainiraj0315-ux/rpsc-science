@@ -1,57 +1,45 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RPSC Science Audio App</title>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<title>RPSC Science</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{--bg:#f4f6fb;--c:#fff;--t:#1d2433;--p:#5b3df5;--m:#6b7280;--b:#e3e7f0}
 @media(prefers-color-scheme:dark){:root{--bg:#10131c;--c:#1a1f2d;--t:#eef1f8;--m:#9aa3b5;--b:#2a3144}}
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--t)}
-header{background:var(--p);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
-h1{font-size:17px;margin:0}main{padding:12px;max-width:760px;margin:auto}
+header{background:var(--p);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.lh{display:flex;align-items:center;gap:8px}#lg{width:34px;height:34px;border-radius:8px;background:#fff}h1{font-size:17px;margin:0}main{padding:12px;max-width:760px;margin:auto}
 .card{background:var(--c);border:1px solid var(--b);border-radius:12px;padding:12px;margin:10px 0}
 input,button{font:inherit;padding:10px;border-radius:8px;border:1px solid var(--b);background:var(--c);color:var(--t);width:100%;margin:4px 0}
-button{background:var(--p);color:#fff;border:0;cursor:pointer;width:auto;padding:9px 14px}
-button.s{background:var(--m)}header button{background:#fff3;padding:6px 10px;margin-left:6px}
-.tabs{display:flex;gap:6px}.tabs button{flex:1;background:var(--c);color:var(--t);border:1px solid var(--b)}.tabs .on{background:var(--p);color:#fff}
+button{background:var(--p);color:#fff;border:0;cursor:pointer;width:auto;padding:8px 12px;margin:3px 3px 3px 0}
+button.s{background:var(--m)}header button{background:#fff3;padding:6px 10px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.tabs button{width:100%;padding:9px 2px;background:var(--c);color:var(--t);border:1px solid var(--b)}.tabs .on{background:var(--p);color:#fff}
 details{background:var(--c);border:1px solid var(--b);border-radius:12px;margin:8px 0;padding:10px 12px}
 summary{font-weight:600;cursor:pointer}.ch{border-top:1px dashed var(--b);padding:8px 0}
-.cl{font-size:12px;color:var(--p);font-weight:700}audio{width:100%;margin-top:6px}.m{color:var(--m);font-size:13px}
+audio{width:100%;margin-top:6px}.m{color:var(--m);font-size:13px}a{color:var(--p);font-weight:600}
 .hide{display:none!important}#qr{display:flex;justify-content:center;padding:14px;background:#fff;border-radius:10px}
 </style></head><body>
-<header><h1>🔬 RPSC Science – Audio</h1><div><button onclick="showQR()">QR</button><button id="lo" class="hide" onclick="auth.signOut()">Logout</button></div></header>
+<header><div class="lh"><img id="lg" class="hide" alt=""><h1 id="nm">RPSC Science</h1></div><div><button onclick="showQR()">QR</button><button id="lo" onclick="lg()">🔑 Teacher</button></div></header>
 <main>
-<div id="login" class="card"><b>Login</b>
-<input id="id" placeholder="Student ID / Teacher email" autocapitalize="none">
+<div id="login" class="card hide"><b>Teacher Login</b>
+
 <input id="pw" type="password" placeholder="Password">
-<button onclick="doLogin()">Login</button> <span id="err" class="m"></span></div>
-<div id="app" class="hide">
-<div id="tadm" class="card hide"><b>👩‍🏫 Teacher panel</b><div class="m">नया Student ID बनाएँ</div>
-<input id="nid" placeholder="Student ID (e.g. rahul01)" autocapitalize="none"><input id="npw" placeholder="Password (min 6)">
-<button onclick="addStu()">Student जोड़ें</button> <span id="smsg" class="m"></span></div>
-<div class="tabs"><button id="t1" class="on" onclick="tab(1)">Part I (Sec/Sr Sec)</button><button id="t2" onclick="tab(2)">Part II (Graduation)</button></div>
+<button onclick="doLogin()">Login</button> <span id="err" class="m"></span>
+<div class="m">📲 Chrome menu ⋮ → "Add to Home screen" से ऐप की तरह खोलें</div></div>
+<div id="app">
+<details id="tadm" class="hide"><summary>👩‍🏫 Teacher panel</summary>
+<div class="m">App सेटिंग (सब यहीं से बदलें)</div>
+<input id="sn" placeholder="App का नाम"><input id="sp" placeholder="आपका phone no."><input id="sk" placeholder="सभी units का Master code (वैकल्पिक)"><div class="m">Payment QR (अपने UPI QR का फोटो चुनें)</div><input type="file" accept="image/*" onchange="qrimg(this)"><input id="sr" placeholder="Fees लिखें (जैसे ₹199 सभी units)">
+<div class="m">Logo चुनें</div><input type="file" accept="image/*" onchange="logo(this)">
+<button onclick="saveS()">सेटिंग लागू करें</button><button onclick="dlj()">💾 data.json Save करें</button><div class="m">हर बदलाव के बाद 💾 दबाएँ और data.json GitHub पर replace करें।</div>
+</details>
+<div class="tabs"><button id="tb" class="on" onclick="tab('b')">🧬 Bio</button><button id="tc" onclick="tab('c')">⚗️ Chem</button><button id="tp" onclick="tab('p')">⚡ Phy</button><button id="to" onclick="tab('o')">📚 Other</button></div>
 <input id="q" placeholder="🔍 Unit या chapter खोजें" oninput="render()">
-<div id="list"></div></div></main>
+<div id="list"></div><button id="nu" class="hide" onclick="nu()">➕ नया Unit</button></div>
+<div id="ct" class="card m"></div></main>
 <div id="qm" class="hide" style="position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:9" onclick="this.classList.add('hide')"><div class="card" style="text-align:center"><div id="qr"></div><div class="m">Student इसे स्कैन करें</div></div></div>
+<div id="dlg" class="hide" style="position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:20"><div class="card" style="width:90%;max-width:360px"><div id="dm"></div><input id="di"><button id="dy">OK</button><button class="s" id="dn">रद्द</button></div></div>
 <script>
-// ====== SETUP: अपनी Firebase values यहाँ डालें (README देखें) ======
-const cfg= {
-  apiKey: "AIzaSyD8TUkfLASvEljWpm3esk7RXDb-tc6Vsg4",
-  authDomain: "rpsc-science.firebaseapp.com",
-  projectId: "rpsc-science",
-  storageBucket: "rpsc-science.firebasestorage.app",
-  messagingSenderId: "298529751732",
-  appId: "1:298529751732:web:24449b47d531f06a9a8de1",
-  measurementId: "G-WCPB8YT5RX"
-};
-const TEACHER="sainiraj0315@gmail.com"; // सिर्फ यही email edit कर पाएगा
-const DOM="@student.app";
-// ================================================================
-firebase.initializeApp(cfg);const auth=firebase.auth(),db=firebase.firestore(),st=firebase.storage();
 // Unit -> NCERT chapters (class: chapter). जहाँ unit NCERT में नहीं, वहाँ खाली।
 const P1=[
 ["Cell & Molecular Biology (Cell, Organelles, Nucleic acids)",["9 Fundamental Unit of Life","11 Cell: The Unit of Life","11 Biomolecules","12 Molecular Basis of Inheritance"]],
@@ -101,31 +89,56 @@ const P2=[
 ["Mechanics & Relativity",[]],["Electrodynamics",["12 Electric Charges and Fields","12 Electrostatic Potential and Capacitance","12 Alternating Current"]],
 ["Wave Optics",["12 Wave Optics"]],["Thermal Physics",["11 Thermodynamics","11 Kinetic Theory"]],
 ["Quantum, Atomic & Nuclear Physics",["12 Dual Nature of Radiation and Matter","12 Atoms","12 Nuclei"]],["Electronics",["12 Semiconductor Electronics"]]];
-let part=1,admin=false,A={};
-const $=i=>document.getElementById(i),id=(u,c)=>btoa(unescape(encodeURIComponent(u+'|'+c))).replace(/[\/+=]/g,'');
-function tab(n){part=n;$('t1').className=n==1?'on':'';$('t2').className=n==2?'on':'';render()}
-async function doLogin(){let u=$('id').value.trim(),p=$('pw').value;$('err').textContent='';
- try{await auth.signInWithEmailAndPassword(u.includes('@')?u:u+DOM,p)}catch(e){$('err').textContent='ID या Password गलत है'}}
-auth.onAuthStateChanged(async u=>{
- $('login').classList.toggle('hide',!!u);$('app').classList.toggle('hide',!u);$('lo').classList.toggle('hide',!u);
- admin=(u.email||'').trim().toLowerCase()===TEACHER.trim().toLowerCase();
- const s=await db.collection('audio').get();A={};s.forEach(d=>A[d.id]=d.data());render()});
-function render(){const q=$('q').value.toLowerCase(),L=part==1?P1:P2;let h='';
- L.forEach(([u,cs])=>{const items=cs.length?cs:['(Graduation level – NCERT chapter नहीं)'];
-  if(q&&!(u+items.join()).toLowerCase().includes(q))return;
-  h+=`<details><summary>${u}</summary>`;
-  items.forEach(c=>{const k=id(u,c),a=A[k],cl=/^\d+ /.test(c)?c.split(' ')[0]:'';
-   h+=`<div class="ch">${cl?`<span class="cl">Class ${cl}</span> `:''}${c.replace(/^\d+ /,'')}`;
-   if(a)h+=`<audio controls preload="none" src="${a.url}"></audio>`;else h+=`<div class="m">Audio अभी नहीं है</div>`;
-   if(admin)h+=`<input type="file" accept="audio/*" onchange="up('${k}',this)"><input placeholder="या audio link चिपकाएँ" onchange="lk('${k}',this.value)">`;
-   h+='</div>'});h+='</details>'});$('list').innerHTML=h||'<div class="m">कुछ नहीं मिला</div>'}
-async function save(k,url){await db.collection('audio').doc(k).set({url});A[k]={url};render()}
-async function up(k,el){const f=el.files[0];if(!f)return;el.insertAdjacentText('afterend',' ⏳ Uploading…');
- try{const r=st.ref('audio/'+k+'_'+f.name);await r.put(f);await save(k,await r.getDownloadURL())}catch(e){alert('Upload नहीं हुआ: '+e.message);render()}}
-async function lk(k,v){if(v.trim())await save(k,v.trim())}
-async function addStu(){const i=$('nid').value.trim().toLowerCase(),p=$('npw').value;
- try{const a2=firebase.apps.find(x=>x.name=='s2')||firebase.initializeApp(cfg,'s2');
-  await a2.auth().createUserWithEmailAndPassword(i+DOM,p);await a2.auth().signOut();$('smsg').textContent='✅ '+i+' बन गया';$('nid').value=$('npw').value=''}
- catch(e){$('smsg').textContent='❌ '+e.message}}
+const TM=["Nature & aims of science teaching","Science curriculum, NCF-SE 2023, lesson plan","Methods & approaches of teaching","Science lab & co-curricular activities","Evaluation & blueprint"];
+const $=i=>document.getElementById(i),OP=new Set(),nid=()=>'x'+Date.now().toString(36);
+let G='b',admin=false,me=null,D={s:{name:'RPSC Science',phone:'',upi:'',price:'',logo:''},u:[],t:'',stu:[]},S=D.s,U=D.u;
+const H=async x=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(x)))].map(v=>v.toString(16).padStart(2,'0')).join('');
+function seed(){const a=[],add=(L,r,o,x)=>L.forEach(([n,ch],i)=>a.push({id:'u'+o+i,n:n+x,g:r(i),lock:false,ch:ch.map((t,j)=>({id:'c'+o+i+'_'+j,t,a:''}))}));
+ add(P1,i=>i<15?'b':i<21?'c':'p',1,'');add(P2,i=>i<11?'b':i<22?'c':'p',2,' (Graduation)');
+ TM.forEach((n,i)=>a.push({id:'u3'+i,n,g:'o',lock:false,ch:[]}));return a}
+const OK=()=>{try{return JSON.parse(localStorage.getItem("ok")||"[]")}catch(e){return[]}},G_=i=>U.find(u=>u.id==i),me_=()=>D.stu.find(x=>x.id==me)||{},can=u=>admin||!u.lock||OK().includes(u.id)||(S.allk&&OK().includes("*"));
+async function load(){try{D=await(await fetch('data.json?'+Date.now())).json()}catch(e){}
+ if(!D.u||!D.u.length)D.u=seed();D.stu=D.stu||[];D.t=D.t||'';
+ const dr=localStorage.getItem('draft');if(dr&&localStorage.getItem('me')=='teacher')try{D=JSON.parse(dr)}catch(e){}
+ S=D.s;U=D.u;brand();if(localStorage.getItem('me')=='teacher')enter('teacher');else{if(!D.t)$('err').textContent='पहली बार: नया Teacher password डालें';render()}}
+function brand(){document.title=S.name;$('nm').textContent=S.name;$('lg').src=S.logo||'';$('lg').classList.toggle('hide',!S.logo);
+ let l=document.querySelector('link[rel=icon]')||document.head.appendChild(Object.assign(document.createElement('link'),{rel:'icon'}));if(S.logo)l.href=S.logo;
+ const p=(S.phone||'').replace(/\D/g,''),w=p.length==10?'91'+p:p;
+ $('ct').innerHTML=p?`📞 कोई दिक्कत हो तो संपर्क करें: <a href="tel:${p}">Call</a> | <a href="https://wa.me/${w}">WhatsApp</a>`:'कोई दिक्कत हो तो Teacher से संपर्क करें'}
+function ask(m,v,k='i'){return new Promise(r=>{$('dm').textContent=m;const i=$('di');i.classList.toggle('hide',k!='i');i.value=v||'';$('dn').classList.toggle('hide',k=='a');$('dlg').classList.remove('hide');if(k=='i')i.focus();const f=x=>{$('dlg').classList.add('hide');r(x)};$('dy').onclick=()=>f(k=='i'?i.value:true);$('dn').onclick=()=>f(k=='i'?null:false)})}
+function tab(g){G=g;['b','c','p','o'].forEach(x=>$('t'+x).className=x==g?'on':'');render()}
+async function doLogin(){const p=$('pw').value;$('err').textContent='';if(!p)return;const h=await H(p);
+ if(!D.t){if(p.length<6)return $('err').textContent='Password कम से कम 6 अक्षर';D.t=h;sv()}else if(D.t!=h)return $('err').textContent='Password गलत है';enter('teacher')}
+function lg(){admin?out():$('login').classList.toggle('hide')}
+function enter(id){me=id;admin=id=='teacher';localStorage.setItem('me',id);
+ $('login').classList.add('hide');$('app').classList.remove('hide');$('lo').textContent='Logout';$('tadm').classList.toggle('hide',!admin);$('nu').classList.toggle('hide',!admin);
+ if(admin){$('sn').value=S.name;$('sp').value=S.phone;$('sk').value=S.allk||'';$('sr').value=S.price}render()}
+function out(){localStorage.removeItem('me');location.reload()}
+function render(){const q=$('q').value.toLowerCase();let h='';
+ U.filter(u=>u.g==G&&(!q||(u.n+u.ch.map(c=>c.t).join()).toLowerCase().includes(q))).forEach(u=>{
+  h+=`<details ${OP.has(u.id)?'open':''} ontoggle="tg('${u.id}',this)"><summary>${u.lock?((!admin&&can(u))?'🔓 ':'🔒 '):''}${u.n}</summary>`;
+  if(!can(u)){h+=`<div class="ch">🔒 Paid content. ${S.price||''}${S.qr?`<br><img src="${S.qr}" style="width:100%;max-width:260px;border-radius:8px;background:#fff;margin-top:6px">`:''}<div class="m">QR स्कैन करके Pay करें, फिर Teacher से unlock code लेकर यहाँ डालें।</div><input id="k_${u.id}" placeholder="Unlock code"><button onclick="uc('${u.id}')">🔓 Unlock</button></div>`}
+  else u.ch.forEach(c=>{h+=`<div class="ch">${c.t}<div class="m">${c.a?`<audio controls preload="none" src="${c.a}"></audio>`:'Audio अभी नहीं है'}</div>`;
+   if(admin)h+=`<input value="${c.a||''}" placeholder="audio file का नाम (जैसे cell1.mp3) या link" onchange="sa('${u.id}','${c.id}',this.value)"><button class="s" onclick="ec('${u.id}','${c.id}')">✏️</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑</button>`;h+='</div>'});
+  if(admin)h+=`<div class="ch"><button onclick="nc('${u.id}')">➕ Chapter</button><button class="s" onclick="en('${u.id}')">✏️ नाम</button><button class="s" onclick="lk('${u.id}')">${u.lock?'🔓 Unlock सबके लिए':'🔒 Lock'}</button><button class="s" onclick="kc('${u.id}')">🔑 Code: ${u.k||'-'}</button><button class="s" onclick="gu('${u.id}')">↔ Group</button><button class="s" onclick="dl('${u.id}')">🗑 Unit</button></div>`;
+  h+='</details>'});$('list').innerHTML=h||'<div class="m">कुछ नहीं मिला</div>'}
+function tg(i,el){el.open?OP.add(i):OP.delete(i)}
+function sv(){D.s=S;D.u=U;localStorage.setItem('draft',JSON.stringify(D));if(me)render()}
+function dlj(){sv();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D)],{type:'application/json'}));a.download='data.json';a.click();localStorage.removeItem('draft');ask('data.json डाउनलोड हुई। अब GitHub में इसे Upload करके पुरानी को Replace करें।','','a')}
+function saveS(){S.name=$('sn').value||S.name;S.phone=$('sp').value;S.allk=$('sk').value.trim();S.price=$('sr').value;brand();sv()}
+function logo(el){const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=128;c.getContext('2d').drawImage(im,0,0,128,128);S.logo=c.toDataURL('image/png');brand();sv()};im.src=r.result};r.readAsDataURL(f)}
+async function nu(){const n=await ask('Unit का नाम');if(n){U.push({id:nid(),n,g:G,lock:false,ch:[]});sv()}}
+async function en(i){const u=G_(i),n=await ask('नया नाम',u.n);if(n){u.n=n;sv()}}
+function lk(i){const u=G_(i);u.lock=!u.lock;if(u.lock&&!u.k)u.k=String(1000+Math.floor(Math.random()*9000));sv()}
+async function kc(i){const u=G_(i),k=await ask('इस unit का unlock code (Pay करने वाले student को दें)',u.k||'');if(k!==null){u.k=k.trim();sv()}}
+function uc(i){const v=$('k_'+i).value.trim().toLowerCase(),u=G_(i),a=(S.allk||'').toLowerCase();if(v&&((u.k||'').toLowerCase()==v||(a&&a==v))){const o=OK();o.push(a&&a==v?'*':i);localStorage.setItem('ok',JSON.stringify(o));render()}else ask('Code गलत है','','a')}
+function qrimg(el){const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,500/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.qr=c.toDataURL('image/jpeg',.85);sv();ask('Payment QR लग गया ✅','','a')};im.src=r.result};r.readAsDataURL(f)}
+async function dl(i){if(await ask('Unit हटाएँ?','','c')){U=U.filter(u=>u.id!=i);sv()}}
+async function gu(i){const g=await ask('Group: b=Bio c=Chem p=Phy o=Other');if(g&&'bcpo'.includes(g)){G_(i).g=g;sv()}}
+async function nc(i){const t=await ask('Chapter (जैसे 11 Cell: The Unit of Life)');if(t){G_(i).ch.push({id:nid(),t,a:''});OP.add(i);sv()}}
+async function ec(i,c){const x=G_(i).ch.find(k=>k.id==c),t=await ask('Chapter नाम',x.t);if(t){x.t=t;sv()}}
+async function dc(i,c){if(await ask('Chapter हटाएँ?','','c')){const u=G_(i);u.ch=u.ch.filter(k=>k.id!=c);sv()}}
+function sa(i,c,v){v=v.trim();if(v&&!/^(https?:|audio\/)/.test(v))v='audio/'+v;G_(i).ch.find(k=>k.id==c).a=v;sv()}
 function showQR(){$('qr').innerHTML='';new QRCode($('qr'),{text:location.href.split('#')[0],width:220,height:220});$('qm').classList.remove('hide')}
+load();
 </script></body></html>
