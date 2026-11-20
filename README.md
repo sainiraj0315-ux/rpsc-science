@@ -2,7 +2,7 @@
 
 ## Upload (मोबाइल से)
 1. github.com पर नया repo बनाएँ (Public)।
-2. **Add file → Upload files** से `index.html` डालें → Commit।
+2. **Add file → Upload files** से ये **5 फाइलें एक साथ** डालें → Commit: `index.html`, `manifest.json`, `sw.js`, `icon-192.png`, `icon-512.png`। (पुरानी फाइलें replace हो जाएँगी)
 3. Settings → Pages → Branch **main** → Save।
 4. कुछ मिनट बाद ऊपर लिंक दिखेगा: `https://आपका-username.github.io/repo-नाम/`
    **यही लिंक students को दें।** ऐप में **QR** बटन दबाने पर इसी लिंक का QR बनता है।
@@ -25,7 +25,8 @@ Master code से सारे locked units एक साथ खुलते �
 2. Name डालें, Expiration चुनें, Repository access → **Only select repositories** → अपना repo
 3. Permissions → Repository permissions → **Contents: Read and write** → Generate → Token कॉपी करें
 4. अपनी GitHub वाली लिंक पर Teacher login → Teacher panel → Token चिपकाकर **GitHub जोड़ें**
-5. अब chapter में **🎙 Audio चुनें** से mp3 चुनें → अपने आप upload और save। 💾 भी सीधा GitHub पर save करेगा।
+5. अब chapter में **🎙 Audio जोड़ें** से mp3 चुनें (एक chapter में 10 तक audio, हर बार एक) और **📘 NCERT PDF जोड़ें** से PDF चुनें → अपने आप upload और save।
+   NCERT की PDF ncert.nic.in की वेबसाइट (Textbook) से मुफ़्त डाउनलोड करके यहाँ डालें। 💾 भी सीधा GitHub पर save करेगा।
 Token किसी को न दें; यह सिर्फ़ आपके फोन में रहता है।
 
 ## Audio हाथ से (Token नहीं तो)
@@ -34,3 +35,6 @@ Repo में `audio` folder बनाकर mp3 डालें (फाइल 
 ## सीमाएँ
 - Lock बुनियादी है: GitHub पर सर्वर नहीं होता। Code शेयर हो सकता है और तकनीक जानने वाला data.json या audio का सीधा लिंक खोल सकता है।
 - Pay अपने आप नहीं पहचाना जाता, आप खुद देखकर code देते हैं।
+
+## ऐप की तरह Install
+Chrome में लिंक खोलें → ⋮ → **Install app** (या Add to Home screen)। अपडेट के बाद पुराना पेज दिखे तो लिंक के आख़िर में `?v=2` लगाकर एक बार खोलें।

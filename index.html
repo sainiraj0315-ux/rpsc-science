@@ -2,6 +2,7 @@
 <html lang="hi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>RPSC Science</title>
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#5b3df5"><link rel="apple-touch-icon" href="icon-192.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{--bg:#f4f6fb;--c:#fff;--t:#1d2433;--p:#5b3df5;--m:#6b7280;--b:#e3e7f0}
@@ -113,7 +114,7 @@ function seed(){const a=[],add=(L,r,o,x)=>L.forEach(([n,ch],i)=>a.push({id:'u'+o
 const OK=()=>{try{return JSON.parse(localStorage.getItem("ok")||"[]")}catch(e){return[]}},G_=i=>U.find(u=>u.id==i),me_=()=>D.stu.find(x=>x.id==me)||{},can=u=>admin||!u.lock||OK().includes(u.id)||(S.allk&&OK().includes("*"));
 async function load(){try{D=await(await fetch('data.json?'+Date.now())).json()}catch(e){}
  if(!D.u||!D.u.length)D.u=seed();D.stu=D.stu||[];D.t=D.t||'';
- const dr=localStorage.getItem('draft');if(dr&&localStorage.getItem('me')=='teacher')try{D=JSON.parse(dr)}catch(e){}
+ try{const x=JSON.parse(localStorage.getItem('draft')||'null');if(x&&x.v>(D.v||0))D=x}catch(e){}
  S=D.s;U=D.u;U.forEach(u=>u.ch.forEach(c=>{if(c.a&&!c.au)c.au=[{n:'Audio 1',u:c.a}];delete c.a}));brand();if(localStorage.getItem('me')=='teacher')enter('teacher');else{if(!D.t)$('err').textContent='पहली बार: नया Teacher password डालें';render()}}
 function brand(){document.title=S.name;$('nm').textContent=S.name;$('lg').src=S.logo||'';$('lg').classList.toggle('hide',!S.logo);
  let l=document.querySelector('link[rel=icon]')||document.head.appendChild(Object.assign(document.createElement('link'),{rel:'icon'}));if(S.logo)l.href=S.logo;
@@ -126,9 +127,10 @@ async function ghs(){const t=$('gt').value.trim();if(!t)return;const h=location.
  const o=gp?h.split('.')[0]:await ask('GitHub username',''),r=gp?(location.pathname.split('/')[1]||h):await ask('Repo का नाम','');if(!o||!r)return;
  try{const x=await fetch(`https://api.github.com/repos/${o}/${r}`,{headers:{Authorization:'Bearer '+t}});if(!x.ok)throw 0;
   localStorage.setItem('gh',JSON.stringify({o,r,t}));$('gt').value='';ask('GitHub जुड़ गया ✅','','a')}catch(e){ask('Token या repo सही नहीं है। (यह सिर्फ़ GitHub वाली लिंक पर चलता है)','','a')}}
-async function gput(path,b64){const g=GH(),u=`https://api.github.com/repos/${g.o}/${g.r}/contents/${path}`,H={Authorization:'Bearer '+g.t};let sha;
- const e=await fetch(u,{headers:H});if(e.ok)sha=(await e.json()).sha;
- const x=await fetch(u,{method:'PUT',headers:H,body:JSON.stringify({message:'update '+path,content:b64,sha})});if(!x.ok)throw new Error('GitHub '+x.status)}
+async function gput(path,b64){const g=GH(),u=`https://api.github.com/repos/${g.o}/${g.r}/contents/${path}`,H={Authorization:'Bearer '+g.t};
+ for(let t=0;t<3;t++){let sha;const e=await fetch(u+'?t='+Date.now(),{headers:H,cache:'no-store'});if(e.ok)sha=(await e.json()).sha;
+  const x=await fetch(u,{method:'PUT',headers:H,body:JSON.stringify({message:'update '+path,content:b64,sha})});if(x.ok)return;if(x.status!=409&&x.status!=422)throw new Error('GitHub '+x.status)}
+ throw new Error('GitHub conflict')}
 const gsave=()=>gput('data.json',btoa(unescape(encodeURIComponent(JSON.stringify(D)))));
 const CH=(i,c)=>G_(i).ch.find(k=>k.id==c);
 function addA(i,c,u){const x=CH(i,c);x.au=x.au||[];if(x.au.length>=10){ask('एक chapter में 10 तक audio','','a');return}x.au.push({n:'Audio '+(x.au.length+1),u});sv()}
@@ -166,7 +168,7 @@ function render(){const q=$('q').value.toLowerCase();let h='';
   if(admin)h+=`<details class="tt" ${OP.has('ut_'+u.id)?'open':''} ontoggle="tg('ut_${u.id}',this)"><summary>⚙️ Unit tools</summary><button onclick="nc('${u.id}')">➕ Chapter</button><button class="s" onclick="en('${u.id}')">✏️ नाम</button><button class="s" onclick="lk('${u.id}')">${u.lock?'🔓 Unlock सबके लिए':'🔒 Lock'}</button><button class="s" onclick="kc('${u.id}')">🔑 Code: ${u.k||'-'}</button><button class="s" onclick="gu('${u.id}')">↔ Group</button><button class="s" onclick="dl('${u.id}')">🗑 Unit</button></details>`;
   h+='</details>'});$('list').innerHTML=h||'<div class="m">कुछ नहीं मिला</div>'}
 function tg(i,el){el.open?OP.add(i):OP.delete(i)}
-function sv(){D.s=S;D.u=U;localStorage.setItem('draft',JSON.stringify(D));if(me)render()}
+function sv(){D.s=S;D.u=U;D.v=Date.now();localStorage.setItem('draft',JSON.stringify(D));if(me)render()}
 async function dlj(){sv();if(GH()){try{await gsave();ask('GitHub पर Save हो गया ✅ (1-2 मिनट में students को दिखेगा)','','a')}catch(e){ask('Save नहीं हुआ: '+e.message,'','a')}return}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D)],{type:'application/json'}));a.download='data.json';a.click();localStorage.removeItem('draft');ask('data.json डाउनलोड हुई। अब GitHub में इसे Upload करके पुरानी को Replace करें।','','a')}
 function saveS(){S.name=$('sn').value||S.name;S.phone=$('sp').value;S.allk=$('sk').value.trim();S.price=$('sr').value;brand();sv()}
 function logo(el){const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=128;c.getContext('2d').drawImage(im,0,0,128,128);S.logo=c.toDataURL('image/png');brand();sv()};im.src=r.result};r.readAsDataURL(f)}
@@ -181,6 +183,7 @@ async function gu(i){const g=await ask('Group: b=Bio c=Chem p=Phy o=Other');if(g
 async function nc(i){const t=await ask('Chapter का नाम, शुरू में class नंबर (जैसे 9 Fundamental Unit of Life)');if(t){G_(i).ch.push({id:nid(),t,a:''});OP.add(i);sv()}}
 async function ec(i,c){const x=G_(i).ch.find(k=>k.id==c),t=await ask('Chapter नाम (शुरू में class नंबर)',x.t);if(t){x.t=t;sv()}}
 async function dc(i,c){if(await ask('Chapter हटाएँ?','','c')){const u=G_(i);u.ch=u.ch.filter(k=>k.id!=c);sv()}}
-function showQR(){$('qr').innerHTML='';new QRCode($('qr'),{text:location.href.split('#')[0],width:220,height:220});$('qm').classList.remove('hide')}
+function showQR(){$('qr').innerHTML='';new QRCode($('qr'),{text:location.origin+location.pathname,width:220,height:220});$('qm').classList.remove('hide')}
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 load();
 </script></body></html>
