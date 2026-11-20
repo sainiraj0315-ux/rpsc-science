@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RPSC Science</title><link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#4f46e5">
-
+<title>RPSC Science</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{--bg:#f4f6fb;--c:#fff;--t:#1d2433;--p:#5b3df5;--m:#6b7280;--b:#e3e7f0}
@@ -20,6 +18,19 @@ details{background:var(--c);border:1px solid var(--b);border-radius:12px;margin:
 summary{font-weight:600;cursor:pointer}.ch{border-top:1px dashed var(--b);padding:8px 0}
 audio{width:100%;margin-top:6px}.m{color:var(--m);font-size:13px}a{color:var(--p);font-weight:600}
 .hide{display:none!important}#qr{display:flex;justify-content:center;padding:14px;background:#fff;border-radius:10px}
+header{background:linear-gradient(135deg,#5b3df5,#8b5cf6)}
+details{box-shadow:0 1px 8px #0000000f}summary{font-size:16px}
+.cls{font-weight:700;color:var(--p);margin:16px 0 4px;font-size:14px}
+.chc{background:var(--bg);border:1px solid var(--b);border-radius:14px;padding:12px;margin:8px 0}
+.cht{font-weight:600;font-size:16px}
+.ar{display:flex;align-items:center;gap:8px;margin-top:10px}
+.no{background:var(--p);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex:none}
+.an{flex:1;font-size:14px}.ib{background:transparent;border:0;padding:4px 6px;margin:0;font-size:16px}
+.pdf{display:inline-block;margin-top:12px;background:#e8f0ff;color:#1d4ed8;padding:8px 14px;border-radius:999px;text-decoration:none;font-size:14px}
+@media(prefers-color-scheme:dark){.pdf{background:#1e2a4a;color:#9db8ff}}
+.tt{margin-top:12px;background:transparent;border:1px dashed var(--b);padding:8px 10px;border-radius:10px;box-shadow:none}
+.tt summary{font-size:13px;color:var(--m);font-weight:500}
+.fb{display:inline-block;background:var(--p);color:#fff;padding:9px 14px;border-radius:10px;margin:8px 6px 2px 0;font-size:14px;cursor:pointer}.fb input{display:none}
 </style></head><body>
 <header><div class="lh"><img id="lg" class="hide" alt=""><h1 id="nm">RPSC Science</h1></div><div><button onclick="showQR()">QR</button><button id="lo" onclick="lg()">🔑 Teacher</button></div></header>
 <main>
@@ -103,7 +114,7 @@ const OK=()=>{try{return JSON.parse(localStorage.getItem("ok")||"[]")}catch(e){r
 async function load(){try{D=await(await fetch('data.json?'+Date.now())).json()}catch(e){}
  if(!D.u||!D.u.length)D.u=seed();D.stu=D.stu||[];D.t=D.t||'';
  const dr=localStorage.getItem('draft');if(dr&&localStorage.getItem('me')=='teacher')try{D=JSON.parse(dr)}catch(e){}
- S=D.s;U=D.u;brand();if(localStorage.getItem('me')=='teacher')enter('teacher');else{if(!D.t)$('err').textContent='पहली बार: नया Teacher password डालें';render()}}
+ S=D.s;U=D.u;U.forEach(u=>u.ch.forEach(c=>{if(c.a&&!c.au)c.au=[{n:'Audio 1',u:c.a}];delete c.a}));brand();if(localStorage.getItem('me')=='teacher')enter('teacher');else{if(!D.t)$('err').textContent='पहली बार: नया Teacher password डालें';render()}}
 function brand(){document.title=S.name;$('nm').textContent=S.name;$('lg').src=S.logo||'';$('lg').classList.toggle('hide',!S.logo);
  let l=document.querySelector('link[rel=icon]')||document.head.appendChild(Object.assign(document.createElement('link'),{rel:'icon'}));if(S.logo)l.href=S.logo;
  const p=(S.phone||'').replace(/\D/g,''),w=p.length==10?'91'+p:p;
@@ -119,9 +130,19 @@ async function gput(path,b64){const g=GH(),u=`https://api.github.com/repos/${g.o
  const e=await fetch(u,{headers:H});if(e.ok)sha=(await e.json()).sha;
  const x=await fetch(u,{method:'PUT',headers:H,body:JSON.stringify({message:'update '+path,content:b64,sha})});if(!x.ok)throw new Error('GitHub '+x.status)}
 const gsave=()=>gput('data.json',btoa(unescape(encodeURIComponent(JSON.stringify(D)))));
+const CH=(i,c)=>G_(i).ch.find(k=>k.id==c);
+function addA(i,c,u){const x=CH(i,c);x.au=x.au||[];if(x.au.length>=10){ask('एक chapter में 10 तक audio','','a');return}x.au.push({n:'Audio '+(x.au.length+1),u});sv()}
+function sa(i,c,v){v=v.trim();if(v)addA(i,c,/^(https?:|audio\/)/.test(v)?v:'audio/'+v)}
+async function ea(i,c,k){const x=CH(i,c).au[k],n=await ask('Audio का नाम',x.n);if(n){x.n=n;sv()}}
+async function da(i,c,k){if(await ask('Audio हटाएँ?','','c')){CH(i,c).au.splice(k,1);sv()}}
+function sp(i,c,v){CH(i,c).p=v.trim();sv()}
 async function upa(i,c,el){const f=el.files[0];if(!f)return;if(!GH())return ask('पहले Teacher panel में GitHub जोड़ें, फिर audio upload होगा।','','a');
  if(f.size>25e6)return ask('फाइल 25 MB से बड़ी है','','a');el.insertAdjacentText('afterend',' ⏳ Upload हो रहा है…');
- try{const n=c+'_'+f.name.replace(/[^\w.\-]/g,'_');await gput('audio/'+n,await fb(f));sa(i,c,n);await gsave();ask('Audio upload हो गया ✅ (1-2 मिनट में students को सुनाई देगा)','','a')}
+ try{const n=c+'_'+Date.now().toString(36)+'_'+f.name.replace(/[^\w.\-]/g,'_');await gput('audio/'+n,await fb(f));addA(i,c,'audio/'+n);await gsave();ask('Audio upload हो गया ✅ (1-2 मिनट में students को सुनाई देगा)','','a')}
+ catch(e){ask('Upload नहीं हुआ: '+e.message,'','a');render()}}
+async function upp(i,c,el){const f=el.files[0];if(!f)return;if(!GH())return ask('पहले Teacher panel में GitHub जोड़ें।','','a');
+ if(f.size>25e6)return ask('PDF 25 MB से बड़ी है','','a');el.insertAdjacentText('afterend',' ⏳ Upload…');
+ try{const n=c+'_'+f.name.replace(/[^\w.\-]/g,'_');await gput('pdf/'+n,await fb(f));sp(i,c,'pdf/'+n);await gsave();ask('PDF upload हो गया ✅','','a')}
  catch(e){ask('Upload नहीं हुआ: '+e.message,'','a');render()}}
 function tab(g){G=g;['b','c','p','o'].forEach(x=>$('t'+x).className=x==g?'on':'');render()}
 async function doLogin(){const p=$('pw').value;$('err').textContent='';if(!p)return;const h=await H(p);
@@ -135,9 +156,14 @@ function render(){const q=$('q').value.toLowerCase();let h='';
  U.filter(u=>u.g==G&&(!q||(u.n+u.ch.map(c=>c.t).join()).toLowerCase().includes(q))).forEach(u=>{
   h+=`<details ${OP.has(u.id)?'open':''} ontoggle="tg('${u.id}',this)"><summary>${u.lock?((!admin&&can(u))?'🔓 ':'🔒 '):''}${u.n}</summary>`;
   if(!can(u)){h+=`<div class="ch">🔒 Paid content. ${S.price||''}${S.qr?`<br><img src="${S.qr}" style="width:100%;max-width:260px;border-radius:8px;background:#fff;margin-top:6px">`:''}<div class="m">QR स्कैन करके Pay करें, फिर Teacher से unlock code लेकर यहाँ डालें।</div><input id="k_${u.id}" placeholder="Unlock code"><button onclick="uc('${u.id}')">🔓 Unlock</button></div>`}
-  else u.ch.forEach(c=>{h+=`<div class="ch">${c.t}<div class="m">${c.a?`<audio controls preload="none" src="${c.a}"></audio>`:'Audio अभी नहीं है'}</div>`;
-   if(admin)h+=`<div class="m">🎙 Audio चुनें (upload)</div><input type="file" accept="audio/*" onchange="upa('${u.id}','${c.id}',this)"><input value="${c.a||''}" placeholder="audio file का नाम (जैसे cell1.mp3) या link" onchange="sa('${u.id}','${c.id}',this.value)"><button class="s" onclick="ec('${u.id}','${c.id}')">✏️</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑</button>`;h+='</div>'});
-  if(admin)h+=`<div class="ch"><button onclick="nc('${u.id}')">➕ Chapter</button><button class="s" onclick="en('${u.id}')">✏️ नाम</button><button class="s" onclick="lk('${u.id}')">${u.lock?'🔓 Unlock सबके लिए':'🔒 Lock'}</button><button class="s" onclick="kc('${u.id}')">🔑 Code: ${u.k||'-'}</button><button class="s" onclick="gu('${u.id}')">↔ Group</button><button class="s" onclick="dl('${u.id}')">🗑 Unit</button></div>`;
+  else{const gs={};u.ch.forEach(c=>{const m=/^(\d+) (.*)$/.exec(c.t),k=m?m[1]:'';(gs[k]=gs[k]||[]).push([c,m?m[2]:c.t])});
+   Object.keys(gs).forEach(k=>{h+=`<div class="cls">${k?'📗 Class '+k+' · NCERT':'📘 अन्य'}</div>`;gs[k].forEach(([c,t])=>{const L=c.au||[];h+=`<div class="chc"><div class="cht">${t}</div>`;
+    L.forEach((x,j)=>{h+=`<div class="ar"><span class="no">${j+1}</span><span class="an">${x.n}</span>${admin?`<span><button class="ib" onclick="ea('${u.id}','${c.id}',${j})">✏️</button><button class="ib" onclick="da('${u.id}','${c.id}',${j})">🗑</button></span>`:''}</div><audio controls preload="none" src="${x.u}"></audio>`});
+    if(!L.length)h+='<div class="m">Audio अभी नहीं है</div>';
+    if(c.p)h+=`<a class="pdf" href="${c.p}" target="_blank" rel="noopener">📘 NCERT PDF पढ़ें</a>`;
+    if(admin)h+=`<details class="tt" ${OP.has('t_'+c.id)?'open':''} ontoggle="tg('t_${c.id}',this)"><summary>⚙️ Teacher tools</summary><label class="fb">🎙 Audio जोड़ें (${L.length}/10)<input type="file" accept="audio/*" onchange="upa('${u.id}','${c.id}',this)"></label><label class="fb">📘 PDF ${c.p?'बदलें':'जोड़ें'}<input type="file" accept="application/pdf" onchange="upp('${u.id}','${c.id}',this)"></label><input placeholder="या audio का link" onchange="sa('${u.id}','${c.id}',this.value)"><input value="${c.p||''}" placeholder="या PDF का link" onchange="sp('${u.id}','${c.id}',this.value)"><button class="s" onclick="ec('${u.id}','${c.id}')">✏️ Chapter नाम</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑 Chapter</button></details>`;
+    h+='</div>'})})}
+  if(admin)h+=`<details class="tt" ${OP.has('ut_'+u.id)?'open':''} ontoggle="tg('ut_${u.id}',this)"><summary>⚙️ Unit tools</summary><button onclick="nc('${u.id}')">➕ Chapter</button><button class="s" onclick="en('${u.id}')">✏️ नाम</button><button class="s" onclick="lk('${u.id}')">${u.lock?'🔓 Unlock सबके लिए':'🔒 Lock'}</button><button class="s" onclick="kc('${u.id}')">🔑 Code: ${u.k||'-'}</button><button class="s" onclick="gu('${u.id}')">↔ Group</button><button class="s" onclick="dl('${u.id}')">🗑 Unit</button></details>`;
   h+='</details>'});$('list').innerHTML=h||'<div class="m">कुछ नहीं मिला</div>'}
 function tg(i,el){el.open?OP.add(i):OP.delete(i)}
 function sv(){D.s=S;D.u=U;localStorage.setItem('draft',JSON.stringify(D));if(me)render()}
@@ -152,10 +178,9 @@ function uc(i){const v=$('k_'+i).value.trim().toLowerCase(),u=G_(i),a=(S.allk||'
 function qrimg(el){const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,500/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.qr=c.toDataURL('image/jpeg',.85);sv();ask('Payment QR लग गया ✅','','a')};im.src=r.result};r.readAsDataURL(f)}
 async function dl(i){if(await ask('Unit हटाएँ?','','c')){U=U.filter(u=>u.id!=i);sv()}}
 async function gu(i){const g=await ask('Group: b=Bio c=Chem p=Phy o=Other');if(g&&'bcpo'.includes(g)){G_(i).g=g;sv()}}
-async function nc(i){const t=await ask('Chapter (जैसे 11 Cell: The Unit of Life)');if(t){G_(i).ch.push({id:nid(),t,a:''});OP.add(i);sv()}}
-async function ec(i,c){const x=G_(i).ch.find(k=>k.id==c),t=await ask('Chapter नाम',x.t);if(t){x.t=t;sv()}}
+async function nc(i){const t=await ask('Chapter का नाम, शुरू में class नंबर (जैसे 9 Fundamental Unit of Life)');if(t){G_(i).ch.push({id:nid(),t,a:''});OP.add(i);sv()}}
+async function ec(i,c){const x=G_(i).ch.find(k=>k.id==c),t=await ask('Chapter नाम (शुरू में class नंबर)',x.t);if(t){x.t=t;sv()}}
 async function dc(i,c){if(await ask('Chapter हटाएँ?','','c')){const u=G_(i);u.ch=u.ch.filter(k=>k.id!=c);sv()}}
-function sa(i,c,v){v=v.trim();if(v&&!/^(https?:|audio\/)/.test(v))v='audio/'+v;G_(i).ch.find(k=>k.id==c).a=v;sv()}
 function showQR(){$('qr').innerHTML='';new QRCode($('qr'),{text:location.href.split('#')[0],width:220,height:220});$('qm').classList.remove('hide')}
 load();
 </script></body></html>
