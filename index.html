@@ -158,9 +158,10 @@ function addA(i,c,u){const x=CH(i,c);x.au=x.au||[];if(x.au.length>=10){ask('ए�
 function sa(i,c,v){v=v.trim();if(v)addA(i,c,/^(https?:|audio\/)/.test(v)?v:'audio/'+v)}
 async function ea(i,c,k){const x=CH(i,c).au[k],n=await ask('Audio का नाम',x.n);if(n){x.n=n;sv()}}
 async function da(i,c,k){if(await ask('Audio हटाएँ?','','c')){CH(i,c).au.splice(k,1);sv()}}
+function ma(i,c,k,d){const a=CH(i,c).au,t=k+d;if(t<0||t>=a.length)return;[a[k],a[t]]=[a[t],a[k]];sv();if(GH())gsave().catch(()=>ask('Save नहीं हुआ, 💾 दबाएँ','','a'))}
 function sp(i,c,v){CH(i,c).p=v.trim();sv()}
 const up_=m=>{$('up').textContent=m;$('up').classList.toggle('hide',!m)};
-async function upa(i,c,el){const fs=[...el.files].sort((a,b)=>a.name.localeCompare(b.name,'en',{numeric:true}));el.value='';if(!fs.length)return;
+async function upa(i,c,el){const fs=[...el.files];el.value='';if(!fs.length)return;
  if(!GH())return ask('पहले Teacher panel में GitHub जोड़ें, फिर audio upload होगा।','','a');
  const room=10-(CH(i,c).au||[]).length;if(room<=0)return ask('एक chapter में 10 तक audio','','a');
  const fl=fs.slice(0,room);if(fl.some(f=>f.size>25e6))return ask('कोई फाइल 25 MB से बड़ी है','','a');
@@ -195,7 +196,7 @@ function render(){const q=$('q').value.toLowerCase();let h='';
    h+=`<div class="ch"><b>🔒 Paid unit ${pr?'· '+pr:''}</b>${S.qr?`<br><img src="${S.qr}" style="width:100%;max-width:260px;border-radius:8px;background:#fff;margin-top:8px">`:''}<div class="m" style="white-space:pre-line;margin-top:8px">${S.how||DH}</div>${w?`<a class="pdf" style="background:#25d366;color:#fff" href="${w}">💬 Screenshot WhatsApp करें</a>`:''}<input id="k_${u.id}" placeholder="Unlock code यहाँ डालें" style="margin-top:10px"><button onclick="uc('${u.id}')">🔓 Unlock</button></div>`}
   else{const gs={};u.ch.forEach(c=>{const m=/^(\d+) (.*)$/.exec(c.t),k=m?m[1]:'';(gs[k]=gs[k]||[]).push([c,m?m[2]:c.t])});
    Object.keys(gs).forEach(k=>{h+=`<div class="cls">${k?'📗 Class '+k+' · NCERT':'📘 अन्य'}</div>`;gs[k].forEach(([c,t])=>{const L=c.au||[];h+=`<div class="chc"><div class="cht">${t}</div>`;
-    L.forEach((x,j)=>{h+=`<div class="ar"><span class="no">${j+1}</span><span class="an">${x.n}</span>${admin?`<span><button class="ib" onclick="ea('${u.id}','${c.id}',${j})">✏️</button><button class="ib" onclick="da('${u.id}','${c.id}',${j})">🗑</button></span>`:''}</div><audio controls preload="none" src="${x.u}"></audio>`});
+    L.forEach((x,j)=>{h+=`<div class="ar"><span class="no">${j+1}</span><span class="an">${x.n}</span>${admin?`<span><button class="ib" onclick="ma('${u.id}','${c.id}',${j},-1)">⬆️</button><button class="ib" onclick="ma('${u.id}','${c.id}',${j},1)">⬇️</button><button class="ib" onclick="ea('${u.id}','${c.id}',${j})">✏️</button><button class="ib" onclick="da('${u.id}','${c.id}',${j})">🗑</button></span>`:''}</div><audio controls preload="none" src="${x.u}"></audio>`});
     if(!L.length)h+='<div class="m">Audio अभी नहीं है</div>';
     if(c.p)h+=`<a class="pdf" href="${c.p}" target="_blank" rel="noopener">📘 NCERT PDF पढ़ें</a>`;
     if(admin)h+=`<details class="tt" ${OP.has('t_'+c.id)?'open':''} ontoggle="tg('t_${c.id}',this)"><summary>⚙️ Teacher tools</summary><label class="fb">🎙 Audio जोड़ें (${L.length}/10) · कई एक साथ चुनें<input type="file" accept="audio/*" multiple onchange="upa('${u.id}','${c.id}',this)"></label><label class="fb">📘 PDF ${c.p?'बदलें':'जोड़ें'}<input type="file" accept="application/pdf" onchange="upp('${u.id}','${c.id}',this)"></label><input placeholder="या audio का link" onchange="sa('${u.id}','${c.id}',this.value)"><input value="${c.p||''}" placeholder="या PDF का link" onchange="sp('${u.id}','${c.id}',this.value)"><button class="s" onclick="ec('${u.id}','${c.id}')">✏️ Chapter नाम</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑 Chapter</button></details>`;
