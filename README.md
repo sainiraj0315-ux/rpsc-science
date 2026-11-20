@@ -20,7 +20,15 @@ Unit में **🔒 Lock** दबाएँ। हर locked unit का एक
 Student Payment QR से Pay करे → आप उसे code दें → वह unit में code डालकर खोलता है (उसी फोन में याद रहता है)।
 Master code से सारे locked units एक साथ खुलते हैं।
 
-## Audio
+## Audio सीधा ऐप से upload (GitHub Token, एक बार)
+1. GitHub → Profile → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → Generate new token
+2. Name डालें, Expiration चुनें, Repository access → **Only select repositories** → अपना repo
+3. Permissions → Repository permissions → **Contents: Read and write** → Generate → Token कॉपी करें
+4. अपनी GitHub वाली लिंक पर Teacher login → Teacher panel → Token चिपकाकर **GitHub जोड़ें**
+5. अब chapter में **🎙 Audio चुनें** से mp3 चुनें → अपने आप upload और save। 💾 भी सीधा GitHub पर save करेगा।
+Token किसी को न दें; यह सिर्फ़ आपके फोन में रहता है।
+
+## Audio हाथ से (Token नहीं तो)
 Repo में `audio` folder बनाकर mp3 डालें (फाइल 25 MB तक)। ऐप में chapter के नीचे सिर्फ फाइल का नाम (जैसे `cell1.mp3`) लिखें → 💾 Save → data.json Upload।
 
 ## सीमाएँ
