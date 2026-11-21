@@ -19,7 +19,7 @@ summary{font-weight:600;cursor:pointer}.ch{border-top:1px dashed var(--b);paddin
 audio{width:100%;margin-top:6px}.m{color:var(--m);font-size:13px}a{color:var(--p);font-weight:600}
 .hide{display:none!important}#qr{display:flex;justify-content:center;padding:14px;background:#fff;border-radius:10px}
 .tabs{display:none}.bx{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}.bx>div{background:var(--c);border:1px solid var(--b);border-radius:16px;padding:40px 8px;text-align:center;font-size:20px;font-weight:600;cursor:pointer}.bx small{display:block;color:var(--m);font-size:13px;font-weight:400}
-textarea{width:100%;min-height:80px;font:inherit;padding:8px;border-radius:8px;border:1px solid var(--b);background:var(--c);color:var(--t);margin:4px 0}
+textarea{width:100%;min-height:90px;font:inherit;padding:8px;border-radius:8px;border:1px solid var(--b);background:var(--c);color:var(--t);margin:4px 0}
 </style></head><body>
 <header><div class="lh"><img id="lg" class="hide" alt=""><h1 id="nm">RPSC Science</h1></div><div><button onclick="showQR()">QR</button><button id="lo" onclick="lg()">🔑 Teacher</button></div></header>
 <main>
@@ -122,8 +122,8 @@ function render(){const q=$('q').value.toLowerCase();let h='';
  U.filter(u=>u.g==G&&(!q||(u.n+u.ch.map(c=>c.t).join()).toLowerCase().includes(q))).forEach(u=>{
   h+=`<details ${OP.has(u.id)?'open':''} ontoggle="tg('${u.id}',this)"><summary>${u.lock?'🔒 ':''}${u.n}</summary>`;
   if(!can(u)){h+=`<div class="ch">🔒 Paid content. ${S.price||''}${S.qr?`<br><img src="${S.qr}" style="width:100%;max-width:260px;border-radius:8px;background:#fff;margin-top:6px">`:''}<div class="m">QR स्कैन करके Pay करें, फिर Teacher से unlock code लेकर यहाँ डालें।</div><input id="k_${u.id}" placeholder="Unlock code"><button onclick="uc('${u.id}')">🔓 Unlock</button></div>`}
-  else u.ch.forEach(c=>{h+=`<div class="ch">${c.t}<div class="m">${c.a?`<audio controls preload="none" src="${c.a}"></audio>`:'Audio अभी नहीं है'}</div>`;
-   h+=qh(c);if(admin)h+=`<textarea placeholder="प्रश्न-उत्तर: Q: सवाल (अगली लाइन में) A: जवाब, हर जोड़ी के बीच खाली लाइन" onchange="sq('${u.id}','${c.id}',this.value)">${X(c.qa)}</textarea>`;if(admin)h+=`<input value="${c.a||''}\" placeholder="audio file का नाम (जैसे cell1.mp3) या link" onchange="sa('${u.id}','${c.id}',this.value)"><button class="s" onclick="ec('${u.id}','${c.id}')">✏️</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑</button>`;h+='</div>'});
+  else u.ch.forEach(c=>{h+=`<div class="ch">${c.t}<div class="m">${AL(c.a)}</div>`;
+   if(admin)h+=`<textarea placeholder="Audio files (अधिकतम 10): हर लाइन में एक नाम, जैसे cell1.mp3" onchange="sa('${u.id}','${c.id}',this.value)">${X(c.a)}</textarea><button class="s" onclick="ec('${u.id}','${c.id}')">✏️</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑</button>`;h+='</div>'});
   if(admin)h+=`<div class="ch"><button onclick="nc('${u.id}')">➕ Chapter</button><button class="s" onclick="en('${u.id}')">✏️ नाम</button><button class="s" onclick="lk('${u.id}')">${u.lock?'🔓 Unlock सबके लिए':'🔒 Lock'}</button><button class="s" onclick="kc('${u.id}')">🔑 Code: ${u.k||'-'}</button><button class="s" onclick="gu('${u.id}')">↔ Group</button><button class="s" onclick="dl('${u.id}')">🗑 Unit</button></div>`;
   h+='</details>'});$('list').innerHTML=h||'<div class="m">कुछ नहीं मिला</div>'}
 function tg(i,el){el.open?OP.add(i):OP.delete(i)}
@@ -142,10 +142,10 @@ function gu(i){const g=prompt('Group: b=Bio c=Chem p=Phy o=Other');if(g&&'bcpo'.
 function nc(i){const t=prompt('Chapter (जैसे 11 Cell: The Unit of Life)');if(t){G_(i).ch.push({id:nid(),t,a:''});OP.add(i);sv()}}
 function ec(i,c){const x=G_(i).ch.find(k=>k.id==c),t=prompt('Chapter नाम',x.t);if(t){x.t=t;sv()}}
 function dc(i,c){if(confirm('Chapter हटाएँ?')){const u=G_(i);u.ch=u.ch.filter(k=>k.id!=c);sv()}}
-function sa(i,c,v){v=v.trim();if(v&&!/^(https?:|audio\/)/.test(v))v='audio/'+v;G_(i).ch.find(k=>k.id==c).a=v;sv()}
+function sa(i,c,v){const n=v.split(/[\n,]+/).filter(x=>x.trim()).length;if(n>10)alert('अधिकतम 10 audio, पहले 10 रखे गए हैं');G_(i).ch.find(k=>k.id==c).a=AN(v).join('\n');sv()}
 function showQR(){$('qr').innerHTML='';new QRCode($('qr'),{text:location.href.split('#')[0],width:220,height:220});$('qm').classList.remove('hide')}
 const X=s=>String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-function qh(c){const it=String(c.qa||'').split(/\n\s*\n/).map(b=>{const m=b.match(/^\s*Q[:.)]\s*([\s\S]*?)\n\s*A[:.)]\s*([\s\S]*)$/i);return m?[m[1].trim(),m[2].trim()]:null}).filter(Boolean);return it.length?'<div class="m">❓ प्रश्न-उत्तर</div>'+it.map(x=>`<details><summary>${X(x[0])}</summary><div style="white-space:pre-wrap">${X(x[1])}</div></details>`).join(''):''}
-function sq(i,c,v){G_(i).ch.find(k=>k.id==c).qa=v;sv()}
+const AN=v=>String(v||'').split(/[\n,]+/).map(x=>x.trim()).filter(Boolean).slice(0,10).map(x=>/^(https?:|audio\/)/.test(x)?x:'audio/'+x);
+function AL(v){const a=AN(v);return a.length?a.map((x,i)=>`<div style="margin-top:8px">${a.length>1?'भाग '+(i+1):''}<audio controls preload="none" src="${x}"></audio><a href="${x}" download>⬇ Download</a></div>`).join(''):'Audio अभी नहीं है'}
 load();
 </script></body></html>
