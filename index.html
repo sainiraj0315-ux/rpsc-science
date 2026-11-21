@@ -101,7 +101,7 @@ const OK=()=>{try{return JSON.parse(localStorage.getItem("ok")||"[]")}catch(e){r
 async function load(){try{D=await(await fetch('data.json?'+Date.now())).json()}catch(e){}
  if(!D.u||!D.u.length)D.u=seed();D.stu=D.stu||[];D.t=D.t||'';
  const dr=localStorage.getItem('draft');if(dr&&localStorage.getItem('me')=='teacher')try{D=JSON.parse(dr)}catch(e){}
- S=D.s;U=D.u;brand();if(localStorage.getItem('me')=='teacher')enter('teacher');else{if(!D.t)$('err').textContent='पहली बार: नया Teacher password डालें';render()}}
+ S=D.s;U=D.u;LAST=JSON.stringify(D);brand();if(localStorage.getItem('me')=='teacher')enter('teacher');else{if(!D.t)$('err').textContent='पहली बार: नया Teacher password डालें';render()}}
 function brand(){document.title=S.name;$('nm').textContent=S.name;$('lg').src=S.logo||'';$('lg').classList.toggle('hide',!S.logo);
  let l=document.querySelector('link[rel=icon]')||document.head.appendChild(Object.assign(document.createElement('link'),{rel:'icon'}));if(S.logo)l.href=S.logo;
  const p=(S.phone||'').replace(/\D/g,''),w=p.length==10?'91'+p:p;
@@ -118,7 +118,7 @@ function render(){const q=$('q').value.toLowerCase();let h='';
  if(!G){$('q').classList.add('hide');$('nu').classList.add('hide');const N={b:['🧬','Biology'],p:['⚡','Physics'],c:['⚗️','Chemistry'],o:['📚','Other']};
   $('list').innerHTML='<div class="bx">'+Object.keys(N).map(k=>`<div onclick="tab('${k}')"><div style="font-size:34px">${N[k][0]}</div>${N[k][1]}<small>${U.filter(u=>u.g==k).length} units</small></div>`).join('')+'</div>';return}
  $('q').classList.remove('hide');$('nu').classList.toggle('hide',!admin);
- h+=`<button class="s" onclick="tab('')">← वापस</button>`;
+ h+=`<button class="s" onclick="tab('')">← वापस</button>`+(admin?`<button class="s" onclick="undo()">↩ Undo</button>`:'');
  U.filter(u=>u.g==G&&(!q||(u.n+u.ch.map(c=>c.t).join()).toLowerCase().includes(q))).forEach(u=>{
   h+=`<details ${OP.has(u.id)?'open':''} ontoggle="tg('${u.id}',this)"><summary>${u.lock?'🔒 ':''}${u.n}</summary>`;
   if(!can(u)){h+=`<div class="ch">🔒 Paid content. ${S.price||''}${S.qr?`<br><img src="${S.qr}" style="width:100%;max-width:260px;border-radius:8px;background:#fff;margin-top:6px">`:''}<div class="m">QR स्कैन करके Pay करें, फिर Teacher से unlock code लेकर यहाँ डालें।</div><input id="k_${u.id}" placeholder="Unlock code"><button onclick="uc('${u.id}')">🔓 Unlock</button></div>`}
@@ -127,7 +127,7 @@ function render(){const q=$('q').value.toLowerCase();let h='';
   if(admin)h+=`<div class="ch"><button onclick="nc('${u.id}')">➕ Chapter</button><button class="s" onclick="en('${u.id}')">✏️ नाम</button><button class="s" onclick="lk('${u.id}')">${u.lock?'🔓 Unlock सबके लिए':'🔒 Lock'}</button><button class="s" onclick="kc('${u.id}')">🔑 Code: ${u.k||'-'}</button><button class="s" onclick="gu('${u.id}')">↔ Group</button><button class="s" onclick="dl('${u.id}')">🗑 Unit</button></div>`;
   h+='</details>'});$('list').innerHTML=h||'<div class="m">कुछ नहीं मिला</div>'}
 function tg(i,el){el.open?OP.add(i):OP.delete(i)}
-function sv(){D.s=S;D.u=U;localStorage.setItem('draft',JSON.stringify(D));if(me)render()}
+function sv(){D.s=S;D.u=U;const now=JSON.stringify(D);if(LAST&&LAST!==now){HS.push(LAST);if(HS.length>10)HS.shift();try{localStorage.setItem('hist',JSON.stringify(HS))}catch(e){}}LAST=now;localStorage.setItem('draft',now);if(me)render()}
 function dlj(){sv();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D)],{type:'application/json'}));a.download='data.json';a.click();localStorage.removeItem('draft');alert('data.json डाउनलोड हुई। अब GitHub में इसे Upload करके पुरानी को Replace करें।')}
 function saveS(){S.name=$('sn').value||S.name;S.phone=$('sp').value;S.allk=$('sk').value.trim();S.price=$('sr').value;brand();sv()}
 function logo(el){const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=128;c.getContext('2d').drawImage(im,0,0,128,128);S.logo=c.toDataURL('image/png');brand();sv()};im.src=r.result};r.readAsDataURL(f)}
@@ -164,5 +164,9 @@ async function upa(i,c,files){const ch=G_(i).ch.find(k=>k.id==c),cur=AN(ch.a),ro
   await put('audio/'+nm,await fb(f),'audio');add.push('audio/'+nm)}
   ch.a=cur.concat(add).join('\n');sv();await put('data.json',b64(JSON.stringify(D)),'Update data');alert(add.length+' audio upload हो गए ✅ (1-2 मिनट में सबको दिखेंगे)')}
  catch(e){alert(e.message);if(add.length){ch.a=cur.concat(add).join('\n');sv()}}}
+var LAST=LAST||'',HS=[];try{HS=JSON.parse(localStorage.getItem('hist')||'[]')}catch(e){}
+async function undo(){if(!HS.length)return alert('वापस जाने के लिए कुछ नहीं है');const p=HS.pop();try{localStorage.setItem('hist',JSON.stringify(HS))}catch(e){}
+ D=JSON.parse(p);S=D.s;U=D.u;LAST=p;localStorage.setItem('draft',p);brand();render();
+ if(GH().t&&confirm('GitHub पर भी यही वापस Save करें?'))pushD();else alert('↩ वापस हो गया। पक्का करने के लिए ☁ GitHub पर Save करें दबाइए।')}
 load();
 </script></body></html>
