@@ -19,7 +19,7 @@ summary{font-weight:600;cursor:pointer}.ch{border-top:1px dashed var(--b);paddin
 audio{width:100%;margin-top:6px}.m{color:var(--m);font-size:13px}a{color:var(--p);font-weight:600}
 .hide{display:none!important}#qr{display:flex;justify-content:center;padding:14px;background:#fff;border-radius:10px}
 .tabs{display:none}.bx{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}.bx>div{background:var(--c);border:1px solid var(--b);border-radius:16px;padding:40px 8px;text-align:center;font-size:20px;font-weight:600;cursor:pointer}.bx small{display:block;color:var(--m);font-size:13px;font-weight:400}
-textarea{width:100%;min-height:90px;font:inherit;padding:8px;border-radius:8px;border:1px solid var(--b);background:var(--c);color:var(--t);margin:4px 0}
+textarea{width:100%;min-height:70px;font:inherit;padding:8px;border-radius:8px;border:1px solid var(--b);background:var(--c);color:var(--t);margin:4px 0}
 </style></head><body>
 <header><div class="lh"><img id="lg" class="hide" alt=""><h1 id="nm">RPSC Science</h1></div><div><button onclick="showQR()">QR</button><button id="lo" onclick="lg()">🔑 Teacher</button></div></header>
 <main>
@@ -33,7 +33,7 @@ textarea{width:100%;min-height:90px;font:inherit;padding:8px;border-radius:8px;b
 <div class="m">App सेटिंग (सब यहीं से बदलें)</div>
 <input id="sn" placeholder="App का नाम"><input id="sp" placeholder="आपका phone no."><input id="sk" placeholder="सभी units का Master code (वैकल्पिक)"><div class="m">Payment QR (अपने UPI QR का फोटो चुनें)</div><input type="file" accept="image/*" onchange="qrimg(this)"><input id="sr" placeholder="Fees लिखें (जैसे ₹199 सभी units)">
 <div class="m">Logo चुनें</div><input type="file" accept="image/*" onchange="logo(this)">
-<button onclick="saveS()">सेटिंग लागू करें</button><button onclick="dlj()">💾 data.json Save करें</button><div class="m">हर बदलाव के बाद 💾 दबाएँ और data.json GitHub पर replace करें।</div>
+<div class="m">GitHub से जोड़ें (audio सीधे upload करने के लिए, एक बार भरें)</div><input id="ghu" placeholder="GitHub username"><input id="ghr" placeholder="Repository का नाम"><input id="ght" type="password" placeholder="GitHub token (सिर्फ़ इसी फ़ोन में रहेगा)"><button onclick="ghs()">GitHub जोड़ें</button><button onclick="pushD()">☁ अभी GitHub पर Save करें</button><br><button onclick="saveS()">सेटिंग लागू करें</button><button onclick="dlj()">💾 data.json Save करें</button><div class="m">हर बदलाव के बाद 💾 दबाएँ और data.json GitHub पर replace करें।</div>
 </details>
 <div class="tabs"><button id="tb" class="on" onclick="tab('b')">🧬 Bio</button><button id="tc" onclick="tab('c')">⚗️ Chem</button><button id="tp" onclick="tab('p')">⚡ Phy</button><button id="to" onclick="tab('o')">📚 Other</button></div>
 <input id="q" placeholder="🔍 Unit या chapter खोजें" oninput="render()">
@@ -112,7 +112,7 @@ async function doLogin(){const p=$('pw').value;$('err').textContent='';if(!p)ret
 function lg(){admin?out():$('login').classList.toggle('hide')}
 function enter(id){me=id;admin=id=='teacher';localStorage.setItem('me',id);
  $('login').classList.add('hide');$('app').classList.remove('hide');$('lo').textContent='Logout';$('tadm').classList.toggle('hide',!admin);$('nu').classList.toggle('hide',!admin);
- if(admin){$('sn').value=S.name;$('sp').value=S.phone;$('sk').value=S.allk||'';$('sr').value=S.price}render()}
+ if(admin){const g=GH();$('ghu').value=g.u||'';$('ghr').value=g.r||'';$('sn').value=S.name;$('sp').value=S.phone;$('sk').value=S.allk||'';$('sr').value=S.price}render()}
 function out(){localStorage.removeItem('me');location.reload()}
 function render(){const q=$('q').value.toLowerCase();let h='';
  if(!G){$('q').classList.add('hide');$('nu').classList.add('hide');const N={b:['🧬','Biology'],p:['⚡','Physics'],c:['⚗️','Chemistry'],o:['📚','Other']};
@@ -123,7 +123,7 @@ function render(){const q=$('q').value.toLowerCase();let h='';
   h+=`<details ${OP.has(u.id)?'open':''} ontoggle="tg('${u.id}',this)"><summary>${u.lock?'🔒 ':''}${u.n}</summary>`;
   if(!can(u)){h+=`<div class="ch">🔒 Paid content. ${S.price||''}${S.qr?`<br><img src="${S.qr}" style="width:100%;max-width:260px;border-radius:8px;background:#fff;margin-top:6px">`:''}<div class="m">QR स्कैन करके Pay करें, फिर Teacher से unlock code लेकर यहाँ डालें।</div><input id="k_${u.id}" placeholder="Unlock code"><button onclick="uc('${u.id}')">🔓 Unlock</button></div>`}
   else u.ch.forEach(c=>{h+=`<div class="ch">${c.t}<div class="m">${AL(c.a)}</div>`;
-   if(admin)h+=`<textarea placeholder="Audio files (अधिकतम 10): हर लाइन में एक नाम, जैसे cell1.mp3" onchange="sa('${u.id}','${c.id}',this.value)">${X(c.a)}</textarea><button class="s" onclick="ec('${u.id}','${c.id}')">✏️</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑</button>`;h+='</div>'});
+   if(admin)h+=`<div class="m" style="margin-top:8px">➕ Audio चुनें (एक साथ 10 तक)</div><input type="file" accept="audio/*" multiple onchange="const f=[...this.files];this.value='';upa('${u.id}','${c.id}',f)"><div class="m" id="st_${c.id}"></div><textarea placeholder="Audio के नाम (हर लाइन में एक)। किसी को हटाने के लिए उसकी लाइन मिटाएँ" onchange="sa('${u.id}','${c.id}',this.value)">${X(c.a)}</textarea><button class="s" onclick="ec('${u.id}','${c.id}')">✏️</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑</button>`;h+='</div>'});
   if(admin)h+=`<div class="ch"><button onclick="nc('${u.id}')">➕ Chapter</button><button class="s" onclick="en('${u.id}')">✏️ नाम</button><button class="s" onclick="lk('${u.id}')">${u.lock?'🔓 Unlock सबके लिए':'🔒 Lock'}</button><button class="s" onclick="kc('${u.id}')">🔑 Code: ${u.k||'-'}</button><button class="s" onclick="gu('${u.id}')">↔ Group</button><button class="s" onclick="dl('${u.id}')">🗑 Unit</button></div>`;
   h+='</details>'});$('list').innerHTML=h||'<div class="m">कुछ नहीं मिला</div>'}
 function tg(i,el){el.open?OP.add(i):OP.delete(i)}
@@ -147,5 +147,22 @@ function showQR(){$('qr').innerHTML='';new QRCode($('qr'),{text:location.href.sp
 const X=s=>String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
 const AN=v=>String(v||'').split(/[\n,]+/).map(x=>x.trim()).filter(Boolean).slice(0,10).map(x=>/^(https?:|audio\/)/.test(x)?x:'audio/'+x);
 function AL(v){const a=AN(v);return a.length?a.map((x,i)=>`<div style="margin-top:8px">${a.length>1?'भाग '+(i+1):''}<audio controls preload="none" src="${x}"></audio><a href="${x}" download>⬇ Download</a></div>`).join(''):'Audio अभी नहीं है'}
+const GH=()=>{try{return JSON.parse(localStorage.getItem('gh')||'{}')}catch(e){return{}}};
+function ghs(){const o=GH();o.u=$('ghu').value.trim();o.r=$('ghr').value.trim();if($('ght').value.trim())o.t=$('ght').value.trim();localStorage.setItem('gh',JSON.stringify(o));$('ght').value='';alert('GitHub जुड़ गया ✅')}
+const b64=x=>btoa(unescape(encodeURIComponent(x)));
+const fb=f=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.onerror=no;r.readAsDataURL(f)});
+const GA=(path,opt={})=>{const g=GH();if(!g.t||!g.u||!g.r)throw new Error('पहले Teacher panel में GitHub username, repo और token जोड़ें');
+ return fetch(`https://api.github.com/repos/${g.u}/${g.r}/contents/${path}`,{...opt,headers:{Authorization:'Bearer '+g.t,Accept:'application/vnd.github+json','Content-Type':'application/json'}})};
+async function put(path,content,msg){let sha;const r=await GA(path);if(r.ok)sha=(await r.json()).sha;else if(r.status!=404)throw new Error('GitHub error '+r.status+': username, repo या token जाँचें');
+ const w=await GA(path,{method:'PUT',body:JSON.stringify({message:msg,content,sha})});if(!w.ok)throw new Error('Upload नहीं हुआ ('+w.status+')')}
+async function pushD(){try{sv();await put('data.json',b64(JSON.stringify(D)),'Update data');alert('GitHub पर Save हो गया ✅ (1-2 मिनट में सबको दिखेगा)')}catch(e){alert(e.message)}}
+async function upa(i,c,files){const ch=G_(i).ch.find(k=>k.id==c),cur=AN(ch.a),room=10-cur.length;if(room<=0)return alert('इस chapter में पहले से 10 audio हैं');
+ files=files.slice(0,room);const st=$('st_'+c),add=[];
+ try{for(let k=0;k<files.length;k++){const f=files[k];if(f.size>50*1048576){alert(f.name+' 50 MB से बड़ी है, छोटी करें');continue}
+  const ext=(f.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,''),nm='a'+Date.now().toString(36)+k+'.'+ext;
+  if(st)st.textContent='Upload '+(k+1)+'/'+files.length+': '+f.name+' …';
+  await put('audio/'+nm,await fb(f),'audio');add.push('audio/'+nm)}
+  ch.a=cur.concat(add).join('\n');sv();await put('data.json',b64(JSON.stringify(D)),'Update data');alert(add.length+' audio upload हो गए ✅ (1-2 मिनट में सबको दिखेंगे)')}
+ catch(e){alert(e.message);if(add.length){ch.a=cur.concat(add).join('\n');sv()}}}
 load();
 </script></body></html>
