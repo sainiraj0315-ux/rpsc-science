@@ -1,223 +1,151 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>RPSC Science Hub</title>
+<html lang="hi"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RPSC Science</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-:root{--bg:#f5f7fc;--card:#fff;--ink:#1a1f36;--mut:#5f6784;--pri:#5b3df0;--acc:#0e9f8e;--line:#e3e7f1;--warn:#b45309;--hdr:#5b3df0;box-sizing:border-box}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1224;--card:#1a1e3a;--ink:#eceefb;--mut:#a3a8cf;--pri:#7f9cf5;--acc:#38d3c0;--line:#2b3060;--warn:#f5b04c;--hdr:#2c4aa8}}
-:root[data-theme="dark"]{--bg:#0f1224;--card:#1a1e3a;--ink:#eceefb;--mut:#a3a8cf;--pri:#7f9cf5;--acc:#38d3c0;--line:#2b3060;--warn:#f5b04c;--hdr:#2c4aa8}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding-bottom:70px}
-#top{position:sticky;top:0;z-index:5;background:var(--hdr);color:#fff;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;display:flex;gap:10px;align-items:center;font-weight:600}
-#top button{background:none;border:0;color:#fff;font-size:1.2rem;padding:0 6px}
-.wrap{max-width:720px;margin:auto;padding:20px 16px}
-h2{margin:0 0 4px;font-size:1.35rem}h3.sec{margin:22px 0 10px;font-size:1.05rem}
-.sub{color:var(--mut);font-size:.88rem}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 8px;text-align:center;font-weight:500;cursor:pointer}
-.tile small{display:block;color:var(--mut);font-weight:400;font-size:.78rem}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:10px}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
-.li{cursor:pointer;display:flex;justify-content:space-between;gap:10px;align-items:center}
-.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:8px}.bar i{display:block;height:100%;background:var(--pri)}
-input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit}
-textarea{min-height:90px}label{display:block;font-size:.85rem;color:var(--mut);margin:10px 0 4px}
-button{font:inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 14px}
-button.p{background:var(--pri);color:#fff;border-color:var(--pri)}button.d{color:#c0392b}
-.tabs{display:flex;gap:8px;overflow-x:auto;padding:12px 0}.tabs button{white-space:nowrap}.tabs button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
-.badge{font-size:.72rem;padding:2px 8px;border-radius:20px;border:1px solid var(--line);color:var(--mut)}.badge.v{color:var(--acc);border-color:var(--acc)}.badge.u{color:var(--warn);border-color:var(--warn)}
-details.card summary{cursor:pointer;font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.notes{white-space:pre-wrap}audio{width:100%;margin-top:8px}.empty{text-align:center;color:var(--mut);padding:28px 8px}
-#nav{position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));z-index:6}
-#nav div{font-size:.8rem;color:var(--mut);cursor:pointer;padding:2px 10px}#nav div.on{color:var(--pri);font-weight:600}
-#modal{position:fixed;inset:0;background:#0008;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:20px;z-index:20}
-#modal .card{width:100%;max-width:520px;margin-top:20px}
+:root{--bg:#f4f6fb;--c:#fff;--t:#1d2433;--p:#5b3df5;--m:#6b7280;--b:#e3e7f0}
+@media(prefers-color-scheme:dark){:root{--bg:#10131c;--c:#1a1f2d;--t:#eef1f8;--m:#9aa3b5;--b:#2a3144}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);color:var(--t)}
+header{background:var(--p);color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.lh{display:flex;align-items:center;gap:8px}#lg{width:34px;height:34px;border-radius:8px;background:#fff}h1{font-size:17px;margin:0}main{padding:12px;max-width:760px;margin:auto}
+.card{background:var(--c);border:1px solid var(--b);border-radius:12px;padding:12px;margin:10px 0}
+input,button{font:inherit;padding:10px;border-radius:8px;border:1px solid var(--b);background:var(--c);color:var(--t);width:100%;margin:4px 0}
+button{background:var(--p);color:#fff;border:0;cursor:pointer;width:auto;padding:8px 12px;margin:3px 3px 3px 0}
+button.s{background:var(--m)}header button{background:#fff3;padding:6px 10px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.tabs button{width:100%;padding:9px 2px;background:var(--c);color:var(--t);border:1px solid var(--b)}.tabs .on{background:var(--p);color:#fff}
+details{background:var(--c);border:1px solid var(--b);border-radius:12px;margin:8px 0;padding:10px 12px}
+summary{font-weight:600;cursor:pointer}.ch{border-top:1px dashed var(--b);padding:8px 0}
+audio{width:100%;margin-top:6px}.m{color:var(--m);font-size:13px}a{color:var(--p);font-weight:600}
+.hide{display:none!important}#qr{display:flex;justify-content:center;padding:14px;background:#fff;border-radius:10px}
+.tabs{display:none}.bx{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}.bx>div{background:var(--c);border:1px solid var(--b);border-radius:16px;padding:40px 8px;text-align:center;font-size:20px;font-weight:600;cursor:pointer}.bx small{display:block;color:var(--m);font-size:13px;font-weight:400}
+textarea{width:100%;min-height:80px;font:inherit;padding:8px;border-radius:8px;border:1px solid var(--b);background:var(--c);color:var(--t);margin:4px 0}
 </style></head><body>
-<div id="top"></div><div class="wrap" id="app"><div class="empty">Loading…</div></div>
-<div id="nav"></div><div id="modal"></div>
+<header><div class="lh"><img id="lg" class="hide" alt=""><h1 id="nm">RPSC Science</h1></div><div><button onclick="showQR()">QR</button><button id="lo" onclick="lg()">🔑 Teacher</button></div></header>
+<main>
+<div id="login" class="card hide"><b>Teacher Login</b>
+
+<input id="pw" type="password" placeholder="Password">
+<button onclick="doLogin()">Login</button> <span id="err" class="m"></span>
+<div class="m">📲 Chrome menu ⋮ → "Add to Home screen" से ऐप की तरह खोलें</div></div>
+<div id="app">
+<details id="tadm" class="hide"><summary>👩‍🏫 Teacher panel</summary>
+<div class="m">App सेटिंग (सब यहीं से बदलें)</div>
+<input id="sn" placeholder="App का नाम"><input id="sp" placeholder="आपका phone no."><input id="sk" placeholder="सभी units का Master code (वैकल्पिक)"><div class="m">Payment QR (अपने UPI QR का फोटो चुनें)</div><input type="file" accept="image/*" onchange="qrimg(this)"><input id="sr" placeholder="Fees लिखें (जैसे ₹199 सभी units)">
+<div class="m">Logo चुनें</div><input type="file" accept="image/*" onchange="logo(this)">
+<button onclick="saveS()">सेटिंग लागू करें</button><button onclick="dlj()">💾 data.json Save करें</button><div class="m">हर बदलाव के बाद 💾 दबाएँ और data.json GitHub पर replace करें।</div>
+</details>
+<div class="tabs"><button id="tb" class="on" onclick="tab('b')">🧬 Bio</button><button id="tc" onclick="tab('c')">⚗️ Chem</button><button id="tp" onclick="tab('p')">⚡ Phy</button><button id="to" onclick="tab('o')">📚 Other</button></div>
+<input id="q" placeholder="🔍 Unit या chapter खोजें" oninput="render()">
+<div id="list"></div><button id="nu" class="hide" onclick="nu()">➕ नया Unit</button></div>
+<div id="ct" class="card m"></div></main>
+<div id="qm" class="hide" style="position:fixed;inset:0;background:#000a;display:flex;align-items:center;justify-content:center;z-index:9" onclick="this.classList.add('hide')"><div class="card" style="text-align:center"><div id="qr"></div><div class="m">Student इसे स्कैन करें</div></div></div>
 <script>
-/* Static-hosting shim (GitHub Pages): content comes from content.json; admin edits live in this browser until exported. */
-if(!window.claude||typeof window.claude.use!=='function'){(function(){
- const P='rpsc_',subs={};let base={units:{},topics:{}};
- const q=new URLSearchParams(location.search).get('admin');
- if(q==='1')localStorage.setItem(P+'admin','1');if(q==='0')localStorage.removeItem(P+'admin');
- const admin=localStorage.getItem(P+'admin')==='1';
- const ready=fetch('content.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{for(const c of['units','topics'])(j[c]||[]).forEach(x=>{const{id,...d}=x;base[c][id]=d})}).catch(()=>{});
- const load=c=>{const v=localStorage.getItem(P+c);return v?JSON.parse(v):(base[c]?{...base[c]}:{})};
- const save=(c,o)=>localStorage.setItem(P+c,JSON.stringify(o));
- const snap=c=>({docs:Object.entries(load(c)).map(([id,d])=>({id,exists:true,data:()=>d})),empty:false});
- const notify=c=>(subs[c]||[]).forEach(f=>f(snap(c)));
- const col=c=>({onSnapshot(f){(subs[c]=subs[c]||[]).push(f);setTimeout(()=>f(snap(c)),0);return()=>{}},
-  doc:id=>({async set(d){const o=load(c);o[id]=d;save(c,o);notify(c)},async delete(){const o=load(c);delete o[id];save(c,o);notify(c)}})});
- window.claude={use:async n=>{await ready;return n==='db'?{collection:col}:n==='user'?{canEdit:()=>admin,id:async()=>'local'}:null}};
-})()}
-</script>
-<script>
-const LV=[['c6','Class 6'],['c7','Class 7'],['c8','Class 8'],['c9','Class 9'],['c10','Class 10'],['c11','Class 11'],['c12','Class 12'],['bsc','BSc'],['msc','MSc']];
-const SUBJ={B:'Biology',C:'Chemistry',P:'Physics',T:'Other'};
-const STG={S:'Secondary / Sr. Secondary',G:'Graduation',SG:'School + Graduation',O:'Other'};
-const SEED=`B|SG|Cell and Molecular Biology;B|SG|Genetics;B|S|Taxonomy;B|SG|Ecology and Environmental Biology;B|SG|Biotechnology;B|S|Microbiology;B|SG|Plant Morphology and Anatomy;B|SG|Water Relations;B|SG|Photosynthesis and Respiration;B|S|Enzymes;B|SG|Plant Growth and Development;B|SG|Animal Developmental Biology;B|S|Evolution;B|SG|Human Anatomy and Physiology;B|S|Human Health;B|G|Animal Taxonomy;B|G|Representative Animals;B|G|Taxonomy of Angiosperms;B|G|Cryptogams and Seed Plants;B|G|Reproduction in Plants;B|G|Plant Nutrition;B|G|Economic Zoology;C|S|Atomic Structure;C|SG|Chemical Bonding and Molecular Structure;C|S|Classification of Elements and Periodicity in Properties;C|S|Equilibrium;C|S|Redox Reactions;C|S|Organic Chemistry;C|S|Hydrocarbons;C|G|Co-ordination Compounds;C|G|States of Matter;C|G|Zero Group Elements;C|G|s and p-block Elements;C|G|d-block Elements;C|G|f-block Elements;C|G|Metals and Metallurgy;C|G|Non-metals and their Compounds;C|G|Chemical Kinetics;C|G|Solutions;C|G|Electrochemistry;C|G|Surface Chemistry;C|G|Reaction Mechanism;C|G|Spectroscopy Techniques;C|G|Bio-Inorganic Chemistry;C|G|Bio-molecules;C|G|Polymers;C|G|Chemistry in Everyday Life;P|S|Physical World and Measurements;P|S|Vectors;P|S|Kinematics;P|S|Laws of Motion;P|S|Work, Energy, Power;P|S|Rotational Motion;P|S|Friction;P|S|Gravitation;P|S|Properties of Matter;P|S|Fluid Dynamics;P|S|Electricity and Magnetism;P|S|Ray Optics;P|G|Mechanics;P|G|Classical Electrodynamics;P|G|Wave Optics;P|G|Thermal and Statistical Physics;P|G|Quantum Mechanics;P|G|Modern Physics;T|O|Teaching Methods`.split(';');
-let db,user,assets,uid,isAdmin=false,units=[],topics=[],done=new Set(),S={v:'home',unit:null,tab:'c6',lv:null,subj:null,q:''},pending=false,ready=false,sz=16;
-const $=s=>document.querySelector(s);
-const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const nid=()=>'x'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-const lvName=k=>(LV.find(l=>l[0]===k)||[,k])[1];
-const cnt=(uid_,lv)=>topics.filter(t=>t.unitId===uid_&&(!lv||t.level===lv)).length;
-
-async function init(){
-  try{
-    user=await claude.use('user');db=await claude.use('db');assets=await claude.use('assets');
-    isAdmin=user?user.canEdit():false;
-    if(!db){$('#app').innerHTML='<div class="empty">Please sign in to open this platform.</div>';return}
-    uid=await user.id();
-    db.collection('units').onSnapshot(s=>{units=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0));ready=true;render()},()=>{});
-    db.collection('topics').onSnapshot(s=>{topics=s.docs.map(d=>({id:d.id,...d.data()}));render()},()=>{});
-    db.collection('data/users/'+uid).onSnapshot(s=>{done=new Set(s.docs.filter(d=>d.data().done).map(d=>d.id.slice(2)));render()},()=>{});
-  }catch(err){$('#app').innerHTML='<div class="empty">Could not load: '+e(err.message||err)+'</div>'}
-}
-function render(){
-  if([...document.querySelectorAll('audio')].some(a=>!a.paused)){pending=true;return}
-  pending=false;
-  const open=[...document.querySelectorAll('details[open]')].map(d=>d.dataset.id);
-  const V={home,cls,subj,unit:unitView,ask,settings,privacy}[S.v]||home;
-  const back=S.v!=='home'&&!['settings','ask','privacy'].includes(S.v);
-  $('#top').innerHTML=(back?'<button data-act="back">←</button>':'')+'<span style="flex:1;font-size:1.2rem">🔬 RPSC Science</span>'+(isAdmin?'<button data-act="nav" data-id="settings" style="font-size:.9rem;background:#ffffff33;border-radius:10px;padding:8px 12px">🔑 Teacher</button>':'');
-  $('#nav').innerHTML=[['home','🏠 Home'],['ask','💬 Ask'],['privacy','🔒 Privacy'],['settings','⚙️ Settings']].map(n=>`<div class="${(S.v===n[0]||(n[0]==='home'&&['cls','subj','unit'].includes(S.v)))?'on':''}" data-act="nav" data-id="${n[0]}">${n[1]}</div>`).join('');
-  $('#app').innerHTML=V();document.body.style.fontSize=sz+'px';
-  open.forEach(i=>{const d=document.querySelector('details[data-id="'+i+'"]');if(d)d.open=true});
-  const q=$('#q')||$('#hq');if(q&&S.focus){q.focus();q.setSelectionRange(q.value.length,q.value.length)}
-}
-document.addEventListener('pause',()=>{if(pending)render()},true);
-function emptyUnits(){return `<div class="empty">No units yet.${isAdmin?'<div class="row" style="justify-content:center"><button class="p" data-act="seed">Import RPSC syllabus units</button></div>':' The admin has not added content yet.'}</div>`}
-function home(){
-  const ic={B:'🧬',C:'⚗️',P:'⚡',T:'📚'};
-  return `<h2>Choose a subject</h2><div class="g2" style="margin-top:14px">${['B','P','C','T'].map(k=>`<div class="tile" data-act="subj" data-id="${k}" style="padding:48px 8px;font-size:1.25rem"><div style="font-size:2.2rem">${ic[k]}</div>${SUBJ[k]}<small>${units.filter(u=>u.subject===k).length} units</small></div>`).join('')}</div>${units.length?'':emptyUnits()}`}
-function home2(){
-  const k=S.hs||'B',q=(S.hq||'').toLowerCase();
-  const ic={B:'🧬',C:'⚗️',P:'⚡',T:'📚'},sn={B:'Bio',C:'Chem',P:'Phy',T:'Other'};
-  const list=units.filter(u=>u.subject===k&&(!q||u.name.toLowerCase().includes(q)));
-  return `<div class="tabs">${Object.keys(sn).map(x=>`<button style="flex:1" class="${k===x?'on':''}" data-act="hs" data-id="${x}">${ic[x]} ${sn[x]}</button>`).join('')}</div>
-  <input id="hq" placeholder="🔍 Unit या chapter खोजें" value="${e(S.hq||'')}">
-  ${isAdmin?'<div class="row"><button class="p" data-act="addUnit">+ Add unit</button></div>':''}
-  ${list.map(u=>`<details class="card" data-id="${u.id}"><summary>${e(u.name)}</summary><div class="sub" style="margin-top:6px">${STG[u.stage]||''}</div><div class="row">${LV.map(l=>`<button data-act="open" data-home="1" data-id="${u.id}" data-lv="${l[0]}">${l[1]}${cnt(u.id,l[0])?' ('+cnt(u.id,l[0])+')':''}</button>`).join('')}</div></details>`).join('')}
-  ${units.length?'':emptyUnits()}`}
-function homeOld(){
-  return `<h2>Choose a subject</h2><h3 class="sec">RPSC Syllabus</h3>
-  <div class="g2">${Object.entries(SUBJ).map(([k,n])=>`<div class="tile" data-act="subj" data-id="${k}">${n}<small>${units.filter(u=>u.subject===k).length} units</small></div>`).join('')}</div>
-  ${units.length?'':emptyUnits()}`}
-function fits(u,lv){const s=u.stage||'SG';if(cnt(u.id,lv))return true;if(s==='O')return true;return lv==='bsc'||lv==='msc'?s.includes('G'):s.includes('S')}
-function cls(){const l=S.lv;const list=units.filter(u=>fits(u,l));
-  return `<h2>${lvName(l)} · Science</h2><div class="sub">Units from the RPSC syllabus that relate to this level</div>`+
-  list.map(u=>`<div class="card li" data-act="open" data-id="${u.id}" data-lv="${l}"><div><b>${e(u.name)}</b><div class="sub">${SUBJ[u.subject]||''}</div></div><span class="badge">${cnt(u.id,l)} topics</span></div>`).join('')+(list.length?'':emptyUnits())}
-function subj(){const list=units.filter(u=>u.subject===S.subj);
-  return `<h2>${SUBJ[S.subj]}</h2>`+(isAdmin?`<div class="row"><button class="p" data-act="addUnit">+ Add unit</button></div>`:'')+
-  list.map(u=>{const t=cnt(u.id),d=topics.filter(x=>x.unitId===u.id&&done.has(x.id)).length;
-  return `<div class="card" data-act="open" data-id="${u.id}" style="cursor:pointer"><b>${e(u.name)}</b> <span class="badge">${STG[u.stage]||''}</span><div class="bar"><i style="width:${t?d*100/t:0}%"></i></div><div class="sub">${t} topics · ${d} done</div></div>`}).join('')+(list.length?'':emptyUnits())}
-function unitView(){
-  const u=units.find(x=>x.id===S.unit);if(!u){S.v='home';return home()}
-  const list=topics.filter(t=>t.unitId===u.id&&t.level===S.tab);
-  const chs=[...new Set(list.map(t=>t.chapter||'General'))].sort();
-  return `<h2>${e(u.name)}</h2><div class="sub">${SUBJ[u.subject]||''} · ${STG[u.stage]||''}</div>
-  ${isAdmin?`<div class="row"><button data-act="editUnit" data-id="${u.id}">Edit unit</button><button class="d" data-act="delUnit" data-id="${u.id}">Delete unit</button></div>`:''}
-  <div class="tabs">${LV.map(l=>`<button class="${S.tab===l[0]?'on':''}" data-act="tab" data-id="${l[0]}">${l[1]} (${cnt(u.id,l[0])})</button>`).join('')}</div>
-  ${isAdmin?`<button class="p" data-act="addTopic">+ Add topic to ${lvName(S.tab)}</button>`:''}
-  ${chs.map(c=>`<h3 class="sec">${e(c)}</h3>`+list.filter(t=>(t.chapter||'General')===c).map(topic).join('')).join('')}
-  ${list.length?'':`<div class="empty">No ${lvName(S.tab)} content in this unit yet.</div>`}`}
-function auds(t){return t.audios||(t.audioUrl?[{url:t.audioUrl,name:t.audioName}]:[])}
-function player(t,x,i){const k=t.id+'_'+i;return `<div style="margin-top:10px"><span class="sub">${e(x.name||'Audio '+(i+1))}</span><audio id="a_${k}" controls preload="none" src="${e(x.url)}"></audio><div class="row"><button data-act="seek" data-id="${k}" data-v="-10">⟲ 10s</button><button data-act="seek" data-id="${k}" data-v="10">10s ⟳</button><select style="width:auto" data-act="speed" data-id="${k}">${[.75,1,1.25,1.5,2].map(s=>`<option ${s===1?'selected':''} value="${s}">${s}x</option>`).join('')}</select>${t.allowDl?`<a href="${e(x.url)}" download="${e(x.name||'audio')}">Download</a>`:''}</div></div>`}
-function qaHtml(t){const items=String(t.qa||'').split(/\n\s*\n/).map(b=>{const m=b.match(/^\s*Q[:.)]\s*([\s\S]*?)\n\s*A[:.)]\s*([\s\S]*)$/i);return m?{q:m[1].trim(),a:m[2].trim()}:null}).filter(Boolean);
-  return items.length?`<h4 style="margin:14px 0 4px">Questions &amp; Answers</h4>`+items.map(x=>`<details class="card" style="margin-top:6px"><summary>${e(x.q)}</summary><p class="notes">${e(x.a)}</p></details>`).join(''):''}
-function topic(t){const v=t.source==='Verified';
-  return `<details class="card" data-id="${t.id}"><summary>${e(t.title)} <span class="badge ${v?'v':'u'}">${v?'Verified':'Unverified'}</span>${done.has(t.id)?'<span class="badge v">✓ done</span>':''}</summary>
-  ${t.notes?`<p class="notes">${e(t.notes)}</p>`:'<p class="sub">No notes added yet.</p>'}
-  ${qaHtml(t)}
-  ${auds(t).map((x,i)=>player(t,x,i)).join('')}
-  <div class="row">${t.pdfUrl?`<a href="${e(t.pdfUrl)}" target="_blank" rel="noopener">📄 ${e(t.pdfName||'PDF notes')}</a>`:''}
-  <button data-act="done" data-id="${t.id}">${done.has(t.id)?'Mark not done':'Mark done'}</button>
-  ${isAdmin?`<button data-act="editTopic" data-id="${t.id}">Edit</button><button class="d" data-act="delTopic" data-id="${t.id}">Delete</button>`:''}</div></details>`}
-function ask(){const q=S.q.toLowerCase().trim();
-  const ru=q?units.filter(u=>u.name.toLowerCase().includes(q)):[],rt=q?topics.filter(t=>[t.title,t.chapter,t.notes].join(' ').toLowerCase().includes(q)):[];
-  return `<h2>Search</h2><div class="sub">Find units and topics</div><div class="row"><input id="q" placeholder="Type to search…" value="${e(S.q)}"></div>
-  ${ru.map(u=>`<div class="card" data-act="open" data-id="${u.id}" style="cursor:pointer"><b>${e(u.name)}</b><div class="sub">${SUBJ[u.subject]||''} · unit</div></div>`).join('')}
-  ${rt.map(t=>{const u=units.find(x=>x.id===t.unitId);return `<div class="card" data-act="goto" data-id="${t.id}" style="cursor:pointer"><b>${e(t.title)}</b><div class="sub">${e(u?.name||'')} · ${lvName(t.level)}</div></div>`}).join('')}
-  ${q&&!ru.length&&!rt.length?'<div class="empty">No results.</div>':''}`}
-function settings(){return `<h2>Settings</h2><div class="card"><b>Theme</b><div class="row"><button data-act="th" data-id="light">Light</button><button data-act="th" data-id="dark">Dark</button></div>
-  <b style="display:block;margin-top:14px">Text size</b><div class="row"><button data-act="sz" data-id="-1">A−</button><button data-act="sz" data-id="1">A+</button></div></div>
-  ${isAdmin?`<div class="card"><b>Admin tools</b><div class="sub">Add units and topics, upload audio and PDFs.</div><div class="row"><button class="p" data-act="seed">Import RPSC syllabus units</button><button data-act="addUnit">+ Add unit</button><button data-act="export">Export content.json</button></div><div class="sub" style="margin-top:8px">Edits are saved in this browser. Export content.json and upload it to GitHub so everyone sees the changes.</div></div>`:''}`}
-function privacy(){return `<h2>Privacy</h2><div class="card"><p>Your “done” marks are stored privately for your account and are not visible to other students.</p><p>Content, audio and PDFs are added by the admin. Items marked Unverified have not been checked against an official source.</p></div>`}
-
-function modal(h){const m=$('#modal');m.innerHTML='<div class="card">'+h+'</div>';m.style.display='flex'}
-function closeM(){$('#modal').style.display='none'}
-function unitForm(u){u=u||{};modal(`<h3>${u.id?'Edit':'Add'} unit</h3><label>Unit name</label><input id="f_name" value="${e(u.name)}">
-<label>Subject</label><select id="f_sub">${Object.entries(SUBJ).map(([k,n])=>`<option value="${k}" ${(u.subject||S.subj||S.hs||'B')===k?'selected':''}>${n}</option>`).join('')}</select>
-<label>Syllabus stage</label><select id="f_stg">${Object.entries(STG).map(([k,n])=>`<option value="${k}" ${(u.stage||'SG')===k?'selected':''}>${n}</option>`).join('')}</select>
-<label>Order</label><input id="f_order" type="number" value="${u.order??units.length}">
-<div class="row"><button class="p" data-act="saveUnit" data-id="${u.id||''}">Save</button><button data-act="close">Cancel</button></div>`)}
-function topicForm(t){t=t||{};modal(`<h3>${t.id?'Edit':'Add'} topic · ${lvName(t.level||S.tab)}</h3><label>Chapter</label><input id="f_ch" value="${e(t.chapter)}">
-<label>Topic title</label><input id="f_title" value="${e(t.title)}"><label>Notes</label><textarea id="f_notes">${e(t.notes)}</textarea>
-<label>Questions &amp; answers (write as “Q: question”, next line “A: answer”, blank line between pairs)</label><textarea id="f_qa" style="min-height:140px">${e(t.qa)}</textarea>
-<label>Source status</label><select id="f_src"><option>Unverified</option><option ${t.source==='Verified'?'selected':''}>Verified</option></select>
-<label>Audio links, one per line (e.g. audio/bio-ch1.mp3 from your repo)</label><textarea id="f_aurl" style="min-height:70px"></textarea>
-<label>PDF link (e.g. pdf/bio-ch1.pdf)</label><input id="f_purl" value="${e(t.pdfUrl)}">
-<label>Audio parts (max 20 MB each; select several files to add parts) ${auds(t).length?'· current: '+auds(t).length+' part(s)':''}</label><input id="f_aud" type="file" accept="audio/*" multiple>
-<label><input id="f_clr" type="checkbox" style="width:auto"> Remove existing audio first</label>
-<label><input id="f_dl" type="checkbox" style="width:auto" ${t.allowDl?'checked':''}> Allow audio download</label>
-<label>PDF notes ${t.pdfName?'(current: '+e(t.pdfName)+')':''}</label><input id="f_pdf" type="file" accept="application/pdf">
-<div class="row"><button class="p" id="saveBtn" data-act="saveTopic" data-id="${t.id||''}">Save</button><button data-act="close">Cancel</button></div><div class="sub" id="msg"></div>`)}
-
-document.addEventListener('input',ev=>{if(ev.target.id==='q'){S.q=ev.target.value;S.focus=true;render()}
-  if(ev.target.id==='hq'){S.hq=ev.target.value;S.focus=true;render()}});
-document.addEventListener('change',ev=>{const t=ev.target;if(t.dataset.act==='speed'){const a=$('#a_'+t.dataset.id);if(a)a.playbackRate=+t.value}});
-document.addEventListener('click',async ev=>{
-  const b=ev.target.closest('[data-act]');if(!b||b.tagName==='SELECT')return;
-  const a=b.dataset.act,id=b.dataset.id;S.focus=false;
-  try{
-  if(a==='hs'){S.hs=id;render()}
-  else if(a==='nav'){S.v=id;render();scrollTo(0,0)}
-  else if(a==='back'){S.v=S.v==='unit'?(S.lv?'cls':S.subj?'subj':'home'):'home';render()}
-  else if(a==='cls'){S.v='cls';S.lv=id;S.subj=null;render();scrollTo(0,0)}
-  else if(a==='subj'){S.v='subj';S.subj=id;S.lv=null;render();scrollTo(0,0)}
-  else if(a==='open'){if(b.dataset.home){S.lv=null;S.subj=null}S.unit=id;S.v='unit';const first=LV.find(l=>cnt(id,l[0]));S.tab=b.dataset.lv||(first?first[0]:'c6');render();scrollTo(0,0)}
-  else if(a==='tab'){S.tab=id;render()}
-  else if(a==='goto'){const t=topics.find(x=>x.id===id);S.unit=t.unitId;S.tab=t.level;S.v='unit';S.lv=null;S.subj=null;render()}
-  else if(a==='th'){document.documentElement.dataset.theme=id}
-  else if(a==='sz'){sz=Math.min(22,Math.max(13,sz+ +id));render()}
-  else if(a==='seek'){const el=$('#a_'+id);if(el)el.currentTime=Math.max(0,el.currentTime+(+b.dataset.v))}
-  else if(a==='done'){const ref=db.collection('data/users/'+uid).doc('p_'+id);done.has(id)?await ref.delete():await ref.set({done:true})}
-  else if(a==='close')closeM();
-  else if(a==='seed'){if(!confirm('Import '+SEED.length+' units from the RPSC Sr. Teacher Science syllabus headings?'))return;
-    b.disabled=true;const rows=SEED.map((s,i)=>{const[sj,st,n]=s.split('|');return['u'+String(i).padStart(3,'0'),{name:n,subject:sj,stage:st,order:i}]});
-    for(let i=0;i<rows.length;i+=10)await Promise.all(rows.slice(i,i+10).map(r=>db.collection('units').doc(r[0]).set(r[1])));
-    b.disabled=false;alert('Imported.')}
-  else if(a==='export'){const o={};for(const c of['units','topics'])o[c]=Object.entries(JSON.parse(localStorage.getItem('rpsc_'+c)||'{}')).map(([id,d])=>({id,...d}));const bl=new Blob([JSON.stringify(o,null,1)],{type:'application/json'});const l=document.createElement('a');l.href=URL.createObjectURL(bl);l.download='content.json';l.click()}
-  else if(a==='addUnit')unitForm();
-  else if(a==='editUnit')unitForm(units.find(x=>x.id===id));
-  else if(a==='saveUnit'){const n=$('#f_name').value.trim();if(!n)return;
-    await db.collection('units').doc(id||nid()).set({name:n,subject:$('#f_sub').value,stage:$('#f_stg').value,order:+$('#f_order').value||0});closeM()}
-  else if(a==='delUnit'){if(!confirm('Delete this unit and all its topics?'))return;
-    for(const t of topics.filter(x=>x.unitId===id))await db.collection('topics').doc(t.id).delete();
-    await db.collection('units').doc(id).delete();S.v='home';render()}
-  else if(a==='addTopic')topicForm();
-  else if(a==='editTopic')topicForm(topics.find(x=>x.id===id));
-  else if(a==='delTopic'){if(confirm('Delete this topic?'))await db.collection('topics').doc(id).delete()}
-  else if(a==='saveTopic'){
-    const title=$('#f_title').value.trim();if(!title)return;
-    const old=topics.find(x=>x.id===id)||{};const msg=$('#msg');$('#saveBtn').disabled=true;
-    const d={unitId:old.unitId||S.unit,level:old.level||S.tab,chapter:$('#f_ch').value.trim(),title,notes:$('#f_notes').value,qa:$('#f_qa').value,source:$('#f_src').value,allowDl:$('#f_dl').checked,
-      audios:$('#f_clr').checked?[]:auds(old),pdfUrl:old.pdfUrl||'',pdfName:old.pdfName||''};
-    for(const file of [...$('#f_aud').files]){
-      if(file.size>20*1024*1024){msg.textContent=file.name+' is '+(file.size/1048576).toFixed(1)+' MB. Max 20 MB per part: split or compress it.';$('#saveBtn').disabled=false;return}
-      if(!assets){msg.textContent='Uploads unavailable for this account.';$('#saveBtn').disabled=false;return}
-      msg.textContent='Uploading '+file.name+'…';const r=await assets.upload(file);d.audios.push({url:r.url,name:file.name})}
-    for(const line of $('#f_aurl').value.split('\n').map(x=>x.trim()).filter(Boolean))d.audios.push({url:line,name:line.split('/').pop()});
-    if($('#f_purl').value.trim()&&!$('#f_pdf').files[0]){d.pdfUrl=$('#f_purl').value.trim();d.pdfName=d.pdfName||'PDF notes'}
-    for(const[f,u,n]of[['f_pdf','pdfUrl','pdfName']]){
-      const file=$('#'+f).files[0];if(!file)continue;
-      if(file.size>20*1024*1024){msg.textContent='File is '+(file.size/1048576).toFixed(1)+' MB. The limit here is 20 MB: compress the audio (mono, 64 kbps MP3) or split it into parts.';$('#saveBtn').disabled=false;return}
-      if(!assets){msg.textContent='Uploads unavailable for this account.';$('#saveBtn').disabled=false;return}
-      msg.textContent='Uploading '+file.name+'…';const r=await assets.upload(file);d[u]=r.url;d[n]=file.name}
-    await db.collection('topics').doc(id||nid()).set(d);closeM()}
-  }catch(err){alert('Error: '+(err.message||err.code||err))}
-});
-init();
+// Unit -> NCERT chapters (class: chapter). जहाँ unit NCERT में नहीं, वहाँ खाली।
+const P1=[
+["Cell & Molecular Biology (Cell, Organelles, Nucleic acids)",["9 Fundamental Unit of Life","11 Cell: The Unit of Life","11 Biomolecules","12 Molecular Basis of Inheritance"]],
+["Genetics (Mendelism, Blood groups, Disorders)",["10 Heredity and Evolution","12 Principles of Inheritance and Variation"]],
+["Taxonomy (Five Kingdom, Animal & Plant groups)",["9 Diversity in Living Organisms","11 The Living World","11 Biological Classification","11 Plant Kingdom","11 Animal Kingdom"]],
+["Ecology & Environment",["9 Natural Resources","10 Our Environment","10 Management of Natural Resources","12 Organisms and Populations","12 Ecosystem","12 Biodiversity and Conservation"]],
+["Biotechnology",["12 Biotechnology: Principles and Processes","12 Biotechnology and its Applications"]],
+["Microbiology (Virus, Bacteria, Lichens)",["11 Biological Classification","12 Microbes in Human Welfare"]],
+["Plant Morphology & Anatomy",["11 Morphology of Flowering Plants","11 Anatomy of Flowering Plants"]],
+["Water Relation (Osmosis, Ascent of sap)",["11 Transport in Plants"]],
+["Photosynthesis",["11 Photosynthesis in Higher Plants"]],
+["Enzymes",["11 Biomolecules"]],
+["Plant Growth & Development",["11 Plant Growth and Development"]],
+["Animal Developmental Biology",["12 Human Reproduction","12 Reproductive Health"]],
+["Evolution",["10 Heredity and Evolution","12 Evolution"]],
+["Human Anatomy & Physiology",["10 Life Processes","10 Control and Coordination","11 Digestion and Absorption","11 Breathing and Exchange of Gases","11 Body Fluids and Circulation","11 Excretory Products","11 Neural Control and Coordination"]],
+["Human Health",["9 Why Do We Fall Ill","12 Human Health and Disease"]],
+["Atomic Structure",["9 Structure of the Atom","9 Atoms and Molecules","11 Structure of Atom","11 Some Basic Concepts of Chemistry"]],
+["Chemical Bonding",["11 Chemical Bonding and Molecular Structure"]],
+["Periodic Classification",["10 Periodic Classification of Elements","11 Classification of Elements and Periodicity"]],
+["Equilibrium (Acid-Base, pH, Buffer)",["10 Acids, Bases and Salts","11 Equilibrium"]],
+["Redox Reactions",["10 Chemical Reactions and Equations","11 Redox Reactions"]],
+["Organic Chemistry & Hydrocarbons",["10 Carbon and its Compounds","11 Organic Chemistry: Basic Principles","11 Hydrocarbons"]],
+["Physical World & Measurements",["11 Units and Measurements"]],
+["Vectors & Kinematics",["9 Motion","11 Motion in a Straight Line","11 Motion in a Plane"]],
+["Laws of Motion",["9 Force and Laws of Motion","11 Laws of Motion"]],
+["Work, Energy, Power",["9 Work and Energy","11 Work, Energy and Power"]],
+["Rotational Motion",["11 System of Particles and Rotational Motion"]],
+["Gravitation",["9 Gravitation","11 Gravitation"]],
+["Properties of Matter & Fluid Mechanics",["11 Mechanical Properties of Solids","11 Mechanical Properties of Fluids"]],
+["Electricity & Magnetism",["10 Electricity","10 Magnetic Effects of Electric Current","12 Moving Charges and Magnetism","12 Electromagnetic Induction"]],
+["Ray Optics",["10 Light: Reflection and Refraction","10 Human Eye and Colourful World","12 Ray Optics and Optical Instruments"]]];
+const P2=[
+["Cell cycle, DNA replication, Transcription, Translation",["11 Cell Cycle and Cell Division","12 Molecular Basis of Inheritance"]],
+["Genetics (Gene regulation, Sex-linked, Mutations)",["12 Principles of Inheritance and Variation"]],
+["Animal Taxonomy & Anatomy",[]],["Taxonomy of Angiosperms",[]],
+["Ecology (Succession, Biogeochemical cycles, Global warming)",["12 Ecosystem","12 Biodiversity and Conservation"]],
+["Biotechnology (Gene transfer, Tissue culture)",["12 Biotechnology and its Applications"]],
+["Cryptogams, Seed Plants, Plant Anatomy",[]],["Reproduction in Plants",["12 Sexual Reproduction in Flowering Plants"]],
+["Respiration",["11 Respiration in Plants"]],["Human Physiology",["11 Chemical Coordination and Integration","11 Locomotion and Movement"]],
+["Economic Zoology",[]],["Co-ordination Compounds",["12 Coordination Compounds"]],
+["States of Matter",["11 States of Matter"]],["s, p, d, f-block Elements",["12 The d- and f-Block Elements"]],
+["Metals & Non-metals",["10 Metals and Non-metals"]],["Chemical Kinetics",["12 Chemical Kinetics"]],
+["Solutions",["12 Solutions"]],["Electrochemistry",["12 Electrochemistry"]],["Surface Chemistry",["12 Surface Chemistry"]],
+["Reaction Mechanism & Spectroscopy",[]],["Bio-molecules & Polymers",["12 Biomolecules","12 Polymers"]],
+["Chemistry in Everyday Life",["12 Chemistry in Everyday Life"]],
+["Mechanics & Relativity",[]],["Electrodynamics",["12 Electric Charges and Fields","12 Electrostatic Potential and Capacitance","12 Alternating Current"]],
+["Wave Optics",["12 Wave Optics"]],["Thermal Physics",["11 Thermodynamics","11 Kinetic Theory"]],
+["Quantum, Atomic & Nuclear Physics",["12 Dual Nature of Radiation and Matter","12 Atoms","12 Nuclei"]],["Electronics",["12 Semiconductor Electronics"]]];
+const TM=["Nature & aims of science teaching","Science curriculum, NCF-SE 2023, lesson plan","Methods & approaches of teaching","Science lab & co-curricular activities","Evaluation & blueprint"];
+const $=i=>document.getElementById(i),OP=new Set(),nid=()=>'x'+Date.now().toString(36);
+let G='',admin=false,me=null,D={s:{name:'RPSC Science',phone:'',upi:'',price:'',logo:''},u:[],t:'',stu:[]},S=D.s,U=D.u;
+const H=async x=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(x)))].map(v=>v.toString(16).padStart(2,'0')).join('');
+function seed(){const a=[],add=(L,r,o,x)=>L.forEach(([n,ch],i)=>a.push({id:'u'+o+i,n:n+x,g:r(i),lock:false,ch:ch.map((t,j)=>({id:'c'+o+i+'_'+j,t,a:''}))}));
+ add(P1,i=>i<15?'b':i<21?'c':'p',1,'');add(P2,i=>i<11?'b':i<22?'c':'p',2,' (Graduation)');
+ TM.forEach((n,i)=>a.push({id:'u3'+i,n,g:'o',lock:false,ch:[]}));return a}
+const OK=()=>{try{return JSON.parse(localStorage.getItem("ok")||"[]")}catch(e){return[]}},G_=i=>U.find(u=>u.id==i),me_=()=>D.stu.find(x=>x.id==me)||{},can=u=>admin||!u.lock||OK().includes(u.id)||(S.allk&&OK().includes("*"));
+async function load(){try{D=await(await fetch('data.json?'+Date.now())).json()}catch(e){}
+ if(!D.u||!D.u.length)D.u=seed();D.stu=D.stu||[];D.t=D.t||'';
+ const dr=localStorage.getItem('draft');if(dr&&localStorage.getItem('me')=='teacher')try{D=JSON.parse(dr)}catch(e){}
+ S=D.s;U=D.u;brand();if(localStorage.getItem('me')=='teacher')enter('teacher');else{if(!D.t)$('err').textContent='पहली बार: नया Teacher password डालें';render()}}
+function brand(){document.title=S.name;$('nm').textContent=S.name;$('lg').src=S.logo||'';$('lg').classList.toggle('hide',!S.logo);
+ let l=document.querySelector('link[rel=icon]')||document.head.appendChild(Object.assign(document.createElement('link'),{rel:'icon'}));if(S.logo)l.href=S.logo;
+ const p=(S.phone||'').replace(/\D/g,''),w=p.length==10?'91'+p:p;
+ $('ct').innerHTML=p?`📞 कोई दिक्कत हो तो संपर्क करें: <a href="tel:${p}">Call</a> | <a href="https://wa.me/${w}">WhatsApp</a>`:'कोई दिक्कत हो तो Teacher से संपर्क करें'}
+function tab(g){G=g;scrollTo(0,0);['b','c','p','o'].forEach(x=>$('t'+x).className=x==g?'on':'');render()}
+async function doLogin(){const p=$('pw').value;$('err').textContent='';if(!p)return;const h=await H(p);
+ if(!D.t){if(p.length<6)return $('err').textContent='Password कम से कम 6 अक्षर';D.t=h;sv()}else if(D.t!=h)return $('err').textContent='Password गलत है';enter('teacher')}
+function lg(){admin?out():$('login').classList.toggle('hide')}
+function enter(id){me=id;admin=id=='teacher';localStorage.setItem('me',id);
+ $('login').classList.add('hide');$('app').classList.remove('hide');$('lo').textContent='Logout';$('tadm').classList.toggle('hide',!admin);$('nu').classList.toggle('hide',!admin);
+ if(admin){$('sn').value=S.name;$('sp').value=S.phone;$('sk').value=S.allk||'';$('sr').value=S.price}render()}
+function out(){localStorage.removeItem('me');location.reload()}
+function render(){const q=$('q').value.toLowerCase();let h='';
+ if(!G){$('q').classList.add('hide');$('nu').classList.add('hide');const N={b:['🧬','Biology'],p:['⚡','Physics'],c:['⚗️','Chemistry'],o:['📚','Other']};
+  $('list').innerHTML='<div class="bx">'+Object.keys(N).map(k=>`<div onclick="tab('${k}')"><div style="font-size:34px">${N[k][0]}</div>${N[k][1]}<small>${U.filter(u=>u.g==k).length} units</small></div>`).join('')+'</div>';return}
+ $('q').classList.remove('hide');$('nu').classList.toggle('hide',!admin);
+ h+=`<button class="s" onclick="tab('')">← वापस</button>`;
+ U.filter(u=>u.g==G&&(!q||(u.n+u.ch.map(c=>c.t).join()).toLowerCase().includes(q))).forEach(u=>{
+  h+=`<details ${OP.has(u.id)?'open':''} ontoggle="tg('${u.id}',this)"><summary>${u.lock?'🔒 ':''}${u.n}</summary>`;
+  if(!can(u)){h+=`<div class="ch">🔒 Paid content. ${S.price||''}${S.qr?`<br><img src="${S.qr}" style="width:100%;max-width:260px;border-radius:8px;background:#fff;margin-top:6px">`:''}<div class="m">QR स्कैन करके Pay करें, फिर Teacher से unlock code लेकर यहाँ डालें।</div><input id="k_${u.id}" placeholder="Unlock code"><button onclick="uc('${u.id}')">🔓 Unlock</button></div>`}
+  else u.ch.forEach(c=>{h+=`<div class="ch">${c.t}<div class="m">${c.a?`<audio controls preload="none" src="${c.a}"></audio>`:'Audio अभी नहीं है'}</div>`;
+   h+=qh(c);if(admin)h+=`<textarea placeholder="प्रश्न-उत्तर: Q: सवाल (अगली लाइन में) A: जवाब, हर जोड़ी के बीच खाली लाइन" onchange="sq('${u.id}','${c.id}',this.value)">${X(c.qa)}</textarea>`;if(admin)h+=`<input value="${c.a||''}\" placeholder="audio file का नाम (जैसे cell1.mp3) या link" onchange="sa('${u.id}','${c.id}',this.value)"><button class="s" onclick="ec('${u.id}','${c.id}')">✏️</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑</button>`;h+='</div>'});
+  if(admin)h+=`<div class="ch"><button onclick="nc('${u.id}')">➕ Chapter</button><button class="s" onclick="en('${u.id}')">✏️ नाम</button><button class="s" onclick="lk('${u.id}')">${u.lock?'🔓 Unlock सबके लिए':'🔒 Lock'}</button><button class="s" onclick="kc('${u.id}')">🔑 Code: ${u.k||'-'}</button><button class="s" onclick="gu('${u.id}')">↔ Group</button><button class="s" onclick="dl('${u.id}')">🗑 Unit</button></div>`;
+  h+='</details>'});$('list').innerHTML=h||'<div class="m">कुछ नहीं मिला</div>'}
+function tg(i,el){el.open?OP.add(i):OP.delete(i)}
+function sv(){D.s=S;D.u=U;localStorage.setItem('draft',JSON.stringify(D));if(me)render()}
+function dlj(){sv();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(D)],{type:'application/json'}));a.download='data.json';a.click();localStorage.removeItem('draft');alert('data.json डाउनलोड हुई। अब GitHub में इसे Upload करके पुरानी को Replace करें।')}
+function saveS(){S.name=$('sn').value||S.name;S.phone=$('sp').value;S.allk=$('sk').value.trim();S.price=$('sr').value;brand();sv()}
+function logo(el){const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=c.height=128;c.getContext('2d').drawImage(im,0,0,128,128);S.logo=c.toDataURL('image/png');brand();sv()};im.src=r.result};r.readAsDataURL(f)}
+function nu(){const n=prompt('Unit का नाम');if(n){U.push({id:nid(),n,g:G,lock:false,ch:[]});sv()}}
+function en(i){const u=G_(i),n=prompt('नया नाम',u.n);if(n){u.n=n;sv()}}
+function lk(i){const u=G_(i);u.lock=!u.lock;if(u.lock&&!u.k)u.k=String(1000+Math.floor(Math.random()*9000));sv()}
+function kc(i){const u=G_(i),k=prompt('इस unit का unlock code (Pay करने वाले student को दें)',u.k||'');if(k!==null){u.k=k.trim();sv()}}
+function uc(i){const v=$('k_'+i).value.trim().toLowerCase(),u=G_(i),a=(S.allk||'').toLowerCase();if(v&&((u.k||'').toLowerCase()==v||(a&&a==v))){const o=OK();o.push(a&&a==v?'*':i);localStorage.setItem('ok',JSON.stringify(o));render()}else alert('Code गलत है')}
+function qrimg(el){const f=el.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,500/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);S.qr=c.toDataURL('image/jpeg',.85);sv();alert('Payment QR लग गया ✅')};im.src=r.result};r.readAsDataURL(f)}
+function dl(i){if(confirm('Unit हटाएँ?')){U=U.filter(u=>u.id!=i);sv()}}
+function gu(i){const g=prompt('Group: b=Bio c=Chem p=Phy o=Other');if(g&&'bcpo'.includes(g)){G_(i).g=g;sv()}}
+function nc(i){const t=prompt('Chapter (जैसे 11 Cell: The Unit of Life)');if(t){G_(i).ch.push({id:nid(),t,a:''});OP.add(i);sv()}}
+function ec(i,c){const x=G_(i).ch.find(k=>k.id==c),t=prompt('Chapter नाम',x.t);if(t){x.t=t;sv()}}
+function dc(i,c){if(confirm('Chapter हटाएँ?')){const u=G_(i);u.ch=u.ch.filter(k=>k.id!=c);sv()}}
+function sa(i,c,v){v=v.trim();if(v&&!/^(https?:|audio\/)/.test(v))v='audio/'+v;G_(i).ch.find(k=>k.id==c).a=v;sv()}
+function showQR(){$('qr').innerHTML='';new QRCode($('qr'),{text:location.href.split('#')[0],width:220,height:220});$('qm').classList.remove('hide')}
+const X=s=>String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function qh(c){const it=String(c.qa||'').split(/\n\s*\n/).map(b=>{const m=b.match(/^\s*Q[:.)]\s*([\s\S]*?)\n\s*A[:.)]\s*([\s\S]*)$/i);return m?[m[1].trim(),m[2].trim()]:null}).filter(Boolean);return it.length?'<div class="m">❓ प्रश्न-उत्तर</div>'+it.map(x=>`<details><summary>${X(x[0])}</summary><div style="white-space:pre-wrap">${X(x[1])}</div></details>`).join(''):''}
+function sq(i,c,v){G_(i).ch.find(k=>k.id==c).qa=v;sv()}
+load();
 </script></body></html>
