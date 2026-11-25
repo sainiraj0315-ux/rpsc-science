@@ -153,17 +153,36 @@ const b64=x=>btoa(unescape(encodeURIComponent(x)));
 const fb=f=>new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.onerror=no;r.readAsDataURL(f)});
 const GA=(path,opt={})=>{const g=GH();if(!g.t||!g.u||!g.r)throw new Error('पहले Teacher panel में GitHub username, repo और token जोड़ें');
  return fetch(`https://api.github.com/repos/${g.u}/${g.r}/contents/${path}`,{...opt,headers:{Authorization:'Bearer '+g.t,Accept:'application/vnd.github+json','Content-Type':'application/json'}})};
-async function put(path,content,msg){let sha;const r=await GA(path);if(r.ok)sha=(await r.json()).sha;else if(r.status!=404)throw new Error('GitHub error '+r.status+': username, repo या token जाँचें');
- const w=await GA(path,{method:'PUT',body:JSON.stringify({message:msg,content,sha})});if(!w.ok)throw new Error('Upload नहीं हुआ ('+w.status+')')}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function xput(url,body,tok,onp){return new Promise((ok,no)=>{const x=new XMLHttpRequest();x.open('PUT',url);x.setRequestHeader('Authorization','Bearer '+tok);x.setRequestHeader('Accept','application/vnd.github+json');x.setRequestHeader('Content-Type','application/json');x.timeout=600000;
+ if(x.upload&&onp)x.upload.onprogress=e=>{if(e.lengthComputable)onp(Math.round(e.loaded*100/e.total))};
+ x.onload=()=>ok({status:x.status,text:x.responseText});x.onerror=()=>no(new Error('नेटवर्क में दिक्कत, इंटरनेट जाँचें'));x.ontimeout=()=>no(new Error('बहुत देर लगी (timeout)। छोटी फ़ाइल या बेहतर नेटवर्क आज़माएँ'));x.send(body)})}
+async function put(path,content,msg,onp,isNew){const g=GH();if(!g.t||!g.u||!g.r)throw new Error('पहले Teacher panel में GitHub username, repo और token जोड़ें');
+ const url=`https://api.github.com/repos/${g.u}/${g.r}/contents/${path}`;let last='';
+ for(let t=0;t<4;t++){
+  let sha;if(!isNew){const r=await GA(path);if(r.ok)sha=(await r.json()).sha;else if(r.status!=404){let m='';try{m=(await r.json()).message}catch(e){}throw new Error('GitHub error '+r.status+(m?' ('+m+')':'')+': username, repo या token जाँचें')}}
+  try{const w=await xput(url,JSON.stringify({message:msg,content,sha}),g.t,onp);
+   if(w.status>=200&&w.status<300)return;
+   if(isNew&&t>0&&w.status==422)return;
+   let m='';try{m=JSON.parse(w.text).message}catch(e){}
+   last='GitHub error '+w.status+(m?' ('+m+')':'');
+   if(![409,422,500,502,503,504].includes(w.status))throw new Error(last+(w.status==403||w.status==404?': token में इस repo की Contents → Read and write अनुमति और repo का नाम जाँचें':''));
+  }catch(e){if(e.message.startsWith('GitHub error'))throw e;last=e.message}
+  await sleep(1500*(t+1))}
+ throw new Error(last||'Upload नहीं हुआ')}
 async function pushD(){try{sv();await put('data.json',b64(JSON.stringify(D)),'Update data');alert('GitHub पर Save हो गया ✅ (1-2 मिनट में सबको दिखेगा)')}catch(e){alert(e.message)}}
 async function upa(i,c,files){const ch=G_(i).ch.find(k=>k.id==c),cur=AN(ch.a),room=10-cur.length;if(room<=0)return alert('इस chapter में पहले से 10 audio हैं');
- files=files.slice(0,room);const st=$('st_'+c),add=[];
- try{for(let k=0;k<files.length;k++){const f=files[k];if(f.size>50*1048576){alert(f.name+' 50 MB से बड़ी है, छोटी करें');continue}
+ files=files.slice(0,room);const add=[],say=m=>{const e=$('st_'+c);if(e)e.textContent=m};
+ try{for(let k=0;k<files.length;k++){const f=files[k];if(f.size>30*1048576){alert(f.name+' 30 MB से बड़ी है। उसे compress करें या 2 हिस्सों में काटें।');continue}
   const ext=(f.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,''),nm='a'+Date.now().toString(36)+k+'.'+ext;
-  if(st)st.textContent='Upload '+(k+1)+'/'+files.length+': '+f.name+' …';
-  await put('audio/'+nm,await fb(f),'audio');add.push('audio/'+nm)}
-  ch.a=cur.concat(add).join('\n');sv();await put('data.json',b64(JSON.stringify(D)),'Update data');alert(add.length+' audio upload हो गए ✅ (1-2 मिनट में सबको दिखेंगे)')}
- catch(e){alert(e.message);if(add.length){ch.a=cur.concat(add).join('\n');sv()}}}
+  say('तैयार हो रहा है '+(k+1)+'/'+files.length+': '+f.name);
+  const b=await fb(f);
+  await put('audio/'+nm,b,'audio',p=>say('Upload '+(k+1)+'/'+files.length+': '+p+'% — '+f.name),true);add.push('audio/'+nm)}
+  if(!add.length)return;
+  ch.a=cur.concat(add).join('\n');sv();say('data.json Save हो रही है…');
+  await put('data.json',b64(JSON.stringify(D)),'Update data',null,false);alert(add.length+' audio upload हो गए ✅ (1-2 मिनट में सबको दिखेंगे)')}
+ catch(e){if(add.length){ch.a=cur.concat(add).join('\n');sv()}alert(e.message+(add.length?'\n\nजो audio चढ़ चुके हैं उनके नाम chapter में जुड़ गए हैं। ☁ अभी GitHub पर Save करें दबाइए।':''))}}
+
 var LAST=LAST||'',HS=[];try{HS=JSON.parse(localStorage.getItem('hist')||'[]')}catch(e){}
 async function undo(){if(!HS.length)return alert('वापस जाने के लिए कुछ नहीं है');const p=HS.pop();try{localStorage.setItem('hist',JSON.stringify(HS))}catch(e){}
  D=JSON.parse(p);S=D.s;U=D.u;LAST=p;localStorage.setItem('draft',p);brand();render();
