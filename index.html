@@ -145,8 +145,8 @@ function dc(i,c){if(confirm('Chapter हटाएँ?')){const u=G_(i);u.ch=u.ch
 function sa(i,c,v){const n=v.split(/[\n,]+/).filter(x=>x.trim()).length;if(n>10)alert('अधिकतम 10 audio, पहले 10 रखे गए हैं');G_(i).ch.find(k=>k.id==c).a=AN(v).join('\n');sv()}
 function showQR(){$('qr').innerHTML='';new QRCode($('qr'),{text:location.href.split('#')[0],width:220,height:220});$('qm').classList.remove('hide')}
 const X=s=>String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-const AN=v=>String(v||'').split(/[\n,]+/).map(x=>x.trim()).filter(Boolean).slice(0,10).map(x=>/^(https?:|audio\/)/.test(x)?x:'audio/'+x);
-function AL(v){const a=AN(v);return a.length?a.map((x,i)=>`<div style="margin-top:8px">${a.length>1?'भाग '+(i+1):''}<audio controls preload="none" src="${x}"></audio><a href="${x}" download>⬇ Download</a></div>`).join(''):'Audio अभी नहीं है'}
+const AN=v=>String(v||'').split(/[\n,]+/).map(x=>x.trim()).filter(Boolean).slice(0,10).map(x=>{const j=x.indexOf('|'),p=(j<0?x:x.slice(0,j)).trim(),n=j<0?'':x.slice(j+1).trim();return (/^(https?:|audio\/)/.test(p)?p:'audio/'+p)+(n?'|'+n:'')});
+function AL(v){const a=AN(v);return a.length?a.map(x=>{const j=x.indexOf('|'),p=j<0?x:x.slice(0,j),n=j<0?(p.split('/').pop()||''):x.slice(j+1);return `<div style="margin-top:8px"><b>🎧 ${X(n)}</b><audio controls preload="none" src="${p}"></audio><a href="${p}" download="${X(n)}">⬇ Download</a></div>`}).join(''):'Audio अभी नहीं है'}
 const GH=()=>{try{return JSON.parse(localStorage.getItem('gh')||'{}')}catch(e){return{}}};
 function ghs(){const o=GH();o.u=$('ghu').value.trim();o.r=$('ghr').value.trim();if($('ght').value.trim())o.t=$('ght').value.trim();localStorage.setItem('gh',JSON.stringify(o));$('ght').value='';alert('GitHub जुड़ गया ✅')}
 const b64=x=>btoa(unescape(encodeURIComponent(x)));
@@ -177,7 +177,7 @@ async function upa(i,c,files){const ch=G_(i).ch.find(k=>k.id==c),cur=AN(ch.a),ro
   const ext=(f.name.split('.').pop()||'mp3').toLowerCase().replace(/[^a-z0-9]/g,''),nm='a'+Date.now().toString(36)+k+'.'+ext;
   say('तैयार हो रहा है '+(k+1)+'/'+files.length+': '+f.name);
   const b=await fb(f);
-  await put('audio/'+nm,b,'audio',p=>say('Upload '+(k+1)+'/'+files.length+': '+p+'% — '+f.name),true);add.push('audio/'+nm)}
+  await put('audio/'+nm,b,'audio',p=>say('Upload '+(k+1)+'/'+files.length+': '+p+'% — '+f.name),true);add.push('audio/'+nm+'|'+f.name.replace(/[|,\n\r]/g,' ').trim())}
   if(!add.length)return;
   ch.a=cur.concat(add).join('\n');sv();say('data.json Save हो रही है…');
   await put('data.json',b64(JSON.stringify(D)),'Update data',null,false);alert(add.length+' audio upload हो गए ✅ (1-2 मिनट में सबको दिखेंगे)')}
