@@ -38,6 +38,9 @@ audio{border-radius:30px}a{text-decoration:none}
 .bx{gap:14px}.bx>div{border:0;color:#fff;border-radius:22px;padding:34px 8px;box-shadow:0 8px 22px #0002;transition:transform .15s}.bx>div:active{transform:scale(.97)}.bx small{color:#ffffffd0}
 .s_b{background:linear-gradient(135deg,#10b981,#059669)}.s_p{background:linear-gradient(135deg,#3b82f6,#6366f1)}.s_c{background:linear-gradient(135deg,#a855f7,#ec4899)}.s_o{background:linear-gradient(135deg,#f59e0b,#ef4444)}
 .hero{margin:6px 2px 16px}.hero b{font-size:22px;display:block}.hero span{color:var(--m);font-size:14px}
+:root{--bg:#fff;--c:#fff;--t:#1d2433;--m:#6b7280;--b:#e6e8f0;color-scheme:light}
+body{background:#fff}
+.chd{box-shadow:none;border:1px solid var(--b);background:#fafaff;margin:8px 0;padding:10px 12px;border-radius:14px}.chd summary{font-size:16px}
 </style></head><body>
 <header><div class="lh"><img id="lg" class="hide" alt=""><h1 id="nm">RPSC Science</h1></div><div><button onclick="showQR()">QR</button><button id="lo" onclick="lg()">🔑 Teacher</button></div></header>
 <main>
@@ -140,8 +143,8 @@ function render(){const q=$('q').value.toLowerCase();let h='';
  U.filter(u=>u.g==G&&(!q||(u.n+u.ch.map(c=>c.t).join()).toLowerCase().includes(q))).forEach(u=>{
   h+=`<details ${OP.has(u.id)?'open':''} ontoggle="tg('${u.id}',this)"><summary>${u.lock?'🔒 ':''}${u.n}</summary>`;
   if(!can(u)){h+=`<div class="ch">🔒 Paid content. ${S.price||''}${S.qr?`<br><img src="${S.qr}" style="width:100%;max-width:260px;border-radius:8px;background:#fff;margin-top:6px">`:''}<div class="m">QR स्कैन करके Pay करें, फिर Teacher से unlock code लेकर यहाँ डालें।</div><input id="k_${u.id}" placeholder="Unlock code"><button onclick="uc('${u.id}')">🔓 Unlock</button></div>`}
-  else [...u.ch].sort((a,b)=>(parseInt(a.t)||99)-(parseInt(b.t)||99)).forEach(c=>{h+=`<div class="ch">${c.t}<div class="m">${AL(c.a)}</div>`;
-   if(admin)h+=`<div class="m" style="margin-top:8px">➕ Audio चुनें (एक साथ 10 तक)</div><input type="file" accept="audio/*" multiple onchange="const f=[...this.files];this.value='';upa('${u.id}','${c.id}',f)"><div class="m" id="st_${c.id}"></div><textarea placeholder="Audio के नाम (हर लाइन में एक)। किसी को हटाने के लिए उसकी लाइन मिटाएँ" onchange="sa('${u.id}','${c.id}',this.value)">${X(c.a)}</textarea><button class="s" onclick="ec('${u.id}','${c.id}')">✏️</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑</button>`;h+='</div>'});
+  else [...u.ch].sort((a,b)=>(parseInt(a.t)||99)-(parseInt(b.t)||99)).forEach(c=>{h+=`<details class="chd" ${OP.has('c'+c.id)?'open':''} ontoggle="tg('c${c.id}',this)"><summary>${c.t}</summary><div class="m">${AL(c.a)}</div>`;
+   if(admin)h+=`<div class="m" style="margin-top:8px">➕ Audio चुनें (एक साथ 10 तक)</div><input type="file" accept="audio/*" multiple onchange="const f=[...this.files];this.value='';upa('${u.id}','${c.id}',f)"><div class="m" id="st_${c.id}"></div><textarea placeholder="Audio के नाम (हर लाइन में एक)। किसी को हटाने के लिए उसकी लाइन मिटाएँ" onchange="sa('${u.id}','${c.id}',this.value)">${X(c.a)}</textarea><button class="s" onclick="ec('${u.id}','${c.id}')">✏️</button><button class="s" onclick="dc('${u.id}','${c.id}')">🗑</button>`;h+='</details>'});
   if(admin)h+=`<div class="ch"><button onclick="nc('${u.id}')">➕ Chapter</button><button class="s" onclick="en('${u.id}')">✏️ नाम</button><button class="s" onclick="lk('${u.id}')">${u.lock?'🔓 Unlock सबके लिए':'🔒 Lock'}</button><button class="s" onclick="kc('${u.id}')">🔑 Code: ${u.k||'-'}</button><button class="s" onclick="gu('${u.id}')">↔ Group</button><button class="s" onclick="dl('${u.id}')">🗑 Unit</button></div>`;
   h+='</details>'});$('list').innerHTML=h||'<div class="m">कुछ नहीं मिला</div>'}
 function tg(i,el){el.open?OP.add(i):OP.delete(i)}
